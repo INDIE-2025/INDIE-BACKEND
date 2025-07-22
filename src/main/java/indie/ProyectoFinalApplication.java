@@ -1,4 +1,4 @@
-package indie.proyecto_final;
+package indie;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
