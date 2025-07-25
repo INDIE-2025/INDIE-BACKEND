@@ -14,8 +14,8 @@ import jakarta.persistence.MappedSuperclass;
 public abstract class BaseModel {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected String id;
 
     @CreationTimestamp
     protected LocalDateTime createdAt;
