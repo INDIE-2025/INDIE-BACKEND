@@ -2,10 +2,12 @@ package indie.repositories;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import indie.models.Usuario;
+import indie.models.moduloUsuario.Usuario;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
-    // Aquí puedes definir métodos personalizados si es necesario
+
     Usuario findByEmail(String email);
     boolean existsByEmail(String email);
     

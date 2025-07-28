@@ -3,7 +3,7 @@ package indie;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import indie.models.Usuario;
+import indie.models.moduloUsuario.Usuario;
 import indie.repositories.UsuarioRepository;
 import jakarta.annotation.PostConstruct;
 
