@@ -1,4 +1,4 @@
-package indie.proyecto_final;
+package indie;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
