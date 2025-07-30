@@ -1,18 +1,10 @@
 package indie.services;
 
 import indie.models.moduloComentarios.ComentarUsuario;
-import indie.repositories.ComentarioRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
-public class ComentarioService extends BaseServiceImpl<ComentarUsuario,Long> {
+import java.util.List;
 
-    ComentarioRepository comentarioRepository;
+public interface ComentarioService extends BaseService<ComentarUsuario, Long>{
 
-    @Autowired
-    public  ComentarioService(ComentarioRepository comentarioRepository){
-        super(comentarioRepository);
-        this.comentarioRepository = comentarioRepository;
-    }
+    List<ComentarUsuario> traerComentariosDeUnUsuario(Long idUsuarioComentado) throws Exception;
 }
