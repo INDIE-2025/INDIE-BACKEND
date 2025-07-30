@@ -14,6 +14,6 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Chat extends BaseModel {
 
-
+    private String atributo; //atributo fake para que se creen las tablas porque sino me tira error
 
 }
