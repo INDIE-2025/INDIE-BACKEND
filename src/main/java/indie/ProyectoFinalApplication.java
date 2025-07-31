@@ -3,10 +3,6 @@ package indie;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import indie.models.moduloUsuario.Usuario;
-import indie.repositories.UsuarioRepository;
-import jakarta.annotation.PostConstruct;
-
 @SpringBootApplication
 public class ProyectoFinalApplication {
 

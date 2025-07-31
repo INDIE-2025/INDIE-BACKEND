@@ -1,4 +1,4 @@
-package indie.repositories;
+package indie.repositories.moduloUsuario;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -6,10 +6,9 @@ import indie.models.moduloUsuario.Usuario;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 
     Usuario findByEmail(String email);
+
     boolean existsByEmail(String email);
-    
-    
 }

@@ -2,13 +2,14 @@ package indie.services;
 
 import java.util.List;
 
+import indie.repositories.moduloUsuario.SeguimientoUsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
     protected final JpaRepository<T, ID> repository;
 
-    public BaseServiceImpl(JpaRepository<T, ID> repository) {
+    public BaseServiceImpl(JpaRepository<T,ID> repository) {
         this.repository = repository;
     }
 
