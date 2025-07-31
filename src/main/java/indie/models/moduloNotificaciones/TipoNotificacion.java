@@ -1,4 +1,35 @@
 package indie.models.moduloNotificaciones;
 
-public class TipoNotificacion {
+import indie.models.BaseModel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+public class TipoNotificacion extends BaseModel {
+
+    @NotNull
+    private String nombreTipoNotificacion;
+
+    @NotNull
+    private boolean notificarEmailTipoNotificacion;
+    // Marca si el admin permite notificar por email
+
+    @NotNull
+    private Date fechaAltaTipoNotificacion;
+
+    @NotNull
+    private Date fechaBajaTipoNotificacion;
+
 }

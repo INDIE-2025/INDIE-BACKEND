@@ -1,8 +1,8 @@
 package indie.models.moduloEventos;
 
 import indie.models.BaseModel;
-import indie.models.moduloUsuario.Usuario;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -12,33 +12,27 @@ import lombok.NoArgsConstructor;
 
 import java.util.Date;
 
-@Data // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-public class Evento extends BaseModel {
+public class ArchivoEvento extends BaseModel {
 
+    @NotNull
+    private Date fechaAltaArchivoEvento;
+
+    @NotNull
+    private Date fechaBajaArchivoEvento;
+
+    @NotNull
+    private String tipoArchivoEvento;
+
+    @NotNull
+    private String urlArchivoEvento;
+
+    @NotNull
     @ManyToOne
-    private Usuario idUsuario;
-
-    @NotNull
-    private String descripcionEvento;
-
-    @NotNull
-    private Date fechaHoraEvento;
-
-    @NotNull
-    private String tituloEvento;
-
-    @NotNull
-    private String ubicacionEvento;
-
-    @NotNull
-    private Date fechaAltaEvento;
-
-    @NotNull
-    private Date fechaBajaEvento;
-
-
+    @JoinColumn(name = "idEvento")
+    private Evento idEvento;
 }
