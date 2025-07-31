@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/comentario")
-public class ComentarioController extends BaseController<ComentarUsuario,Long> {
+public class ComentarioController extends BaseController<ComentarUsuario,String> {
 
     @Autowired
     protected ComentarioServiceImpl comentarioService;
@@ -21,7 +21,7 @@ public class ComentarioController extends BaseController<ComentarUsuario,Long> {
     }
 
     @GetMapping("/comentarios")
-    public ResponseEntity<?> traerComentariosDeUnUsuario(Long idUsuarioComentado) {
+    public ResponseEntity<?> traerComentariosDeUnUsuario(String idUsuarioComentado) {
         try {
             return ResponseEntity.status(HttpStatus.OK).body(comentarioService.traerComentariosDeUnUsuario(idUsuarioComentado));
         } catch (Exception e) {

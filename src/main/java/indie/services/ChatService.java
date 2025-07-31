@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ChatService extends BaseServiceImpl<Chat,Long> {
+public class ChatService extends BaseServiceImpl<Chat,String> {
 
     ChatRepository chatRepository;
 

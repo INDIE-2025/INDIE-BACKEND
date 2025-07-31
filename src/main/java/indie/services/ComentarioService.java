@@ -4,7 +4,7 @@ import indie.models.moduloComentarios.ComentarUsuario;
 
 import java.util.List;
 
-public interface ComentarioService extends BaseService<ComentarUsuario, Long>{
+public interface ComentarioService extends BaseService<ComentarUsuario, String>{
 
-    List<ComentarUsuario> traerComentariosDeUnUsuario(Long idUsuarioComentado) throws Exception;
+    List<ComentarUsuario> traerComentariosDeUnUsuario(String idUsuarioComentado) throws Exception;
 }

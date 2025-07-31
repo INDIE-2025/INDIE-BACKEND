@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Long> implements ComentarioService{
+public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,String> implements ComentarioService{
 
     ComentarioRepository comentarioRepository;
 
@@ -19,7 +19,7 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Long>
     }
 
     @Override
-    public List<ComentarUsuario> traerComentariosDeUnUsuario(Long idUsuarioComentado) throws Exception {
+    public List<ComentarUsuario> traerComentariosDeUnUsuario(String idUsuarioComentado) throws Exception {
         try {
             List<ComentarUsuario> comentario = comentarioRepository.traerComentariosDeUnUsuario(idUsuarioComentado);
             return comentario;
@@ -27,8 +27,4 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Long>
             throw new Exception(e.getMessage());
         }
     }
-
-
-
-
 }
