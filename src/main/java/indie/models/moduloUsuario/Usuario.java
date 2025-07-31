@@ -1,14 +1,14 @@
 package indie.models.moduloUsuario;
 
 import indie.models.BaseModel;
-import jakarta.persistence.Entity;
+import indie.models.moduloCalendario.Calendario;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
+import java.util.Date;
+
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -16,15 +16,25 @@ import lombok.NoArgsConstructor;
 public class Usuario extends BaseModel {
 
     @NotNull
-    private String nombre;
-
+    private int nombreUsuario;
     @NotNull
-    private String email;
-
+    private String apellidoUsuario;
+    @NotNull
+    private String emailUsuario;
+    @NotNull
+    private String username;
     @NotNull
     private String password;
 
+    private String youtubeUsuario;
+    private String spotifyUsuario;
+    private String instagramUsuario;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private Calendario calendario;
+
+    @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     @NotNull
-    private String rol; // ADMIN, USER, etc.
+    private SubTipoUsuario subTipoUsuario;
 
 }

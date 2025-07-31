@@ -1,7 +1,7 @@
 package indie.security;
 
 import indie.models.moduloUsuario.Usuario;
-import indie.services.UsuarioService;
+import indie.services.moduloUsuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.util.List;
 
@@ -50,8 +49,8 @@ public class SecurityConfig {
         return http.getSharedObject(AuthenticationManagerBuilder.class)
                 .userDetailsService(email -> {
                     Usuario u = usuarioService.buscarPorEmail(email).orElseThrow();
-                    return new User(u.getEmail(), u.getPassword(),
-                            List.of(new SimpleGrantedAuthority("ROLE_" + u.getRol())));
+                    return new User(u.getEmailUsuario(), u.getPassword(),
+                            List.of(new SimpleGrantedAuthority("ROLE_" + u.getSubTipoUsuario())));
                 })
                 .passwordEncoder(passwordEncoder())
                 .and()

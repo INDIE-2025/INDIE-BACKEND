@@ -1,7 +1,7 @@
 package indie.security;
 
 import indie.models.moduloUsuario.Usuario;
-import indie.services.UsuarioService;
+import indie.services.moduloUsuario.UsuarioService;
 import io.jsonwebtoken.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -42,12 +42,12 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
         if (jwtUtils.validarToken(token)) {
             String email = jwtUtils.extraerEmail(token);
             Usuario usuario = usuarioService.buscarPorEmail(email).orElse(null);
-            if (usuario != null) {
-                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
-                        usuario.getEmail(), null, List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()))
-                );
-                SecurityContextHolder.getContext().setAuthentication(auth);
-            }
+//            if (usuario != null) {
+//                UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
+//                        usuario.getEmailUsuario(), null, List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getRol()))
+//                );
+//                SecurityContextHolder.getContext().setAuthentication(auth);
+//            }
         }
         try {
             chain.doFilter(request, response);

@@ -17,7 +17,7 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return usuario.getEmail();  // o usuario.getNombreUsuario();
+        return usuario.getEmailUsuario();  // o usuario.getNombreUsuario();
     }
 
     @Override
@@ -27,7 +27,7 @@ public class UsuarioDetails implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(usuario.getRol()));
+        return List.of(new SimpleGrantedAuthority(usuario.getSubTipoUsuario().toString()));
     }
 
     // Métodos extra como isEnabled(), etc.

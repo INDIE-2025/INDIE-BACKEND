@@ -1,8 +1,8 @@
-package indie.services;
+package indie.services.moduloUsuario;
 
-import indie.repositories.UsuarioRepository;
+import indie.repositories.moduloUsuario.UsuarioRepository;
+import indie.services.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 
 import indie.models.moduloUsuario.Usuario;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UsuarioService extends BaseServiceImpl<Usuario, Long> {
+public class UsuarioService extends BaseServiceImpl<Usuario, String> {
 
     UsuarioRepository usuarioRepository;
     private PasswordEncoder passwordEncoder;

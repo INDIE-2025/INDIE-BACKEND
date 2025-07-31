@@ -1,4 +1,31 @@
 package indie.models;
 
-public class Archivo {
+import indie.models.enums.TipoClase;
+import jakarta.persistence.Entity;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Entity
+public class Archivo extends BaseModel{
+
+    @NotNull
+    private String nombreArchivo;
+    @NotNull
+    private TipoClase tipoClase;
+    @NotNull
+    private String tipoArchivo;
+    @NotNull
+    private String urlArchivo;
+    @NotNull
+    private String idObjeto;
+
 }
+
+

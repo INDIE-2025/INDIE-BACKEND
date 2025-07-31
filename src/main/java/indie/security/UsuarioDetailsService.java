@@ -1,7 +1,7 @@
 package indie.security;
 
 import indie.models.moduloUsuario.Usuario;
-import indie.repositories.UsuarioRepository;
+import indie.repositories.moduloUsuario.UsuarioRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
