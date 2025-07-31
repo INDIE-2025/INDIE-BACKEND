@@ -1,4 +1,7 @@
 package indie.models.moduloBackUp;
 
-public class TipoOperacion {
+public enum TipoOperacion {
+    BACKUP,
+    RECUPERACION
 }
+
