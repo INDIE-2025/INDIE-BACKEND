@@ -1,7 +1,9 @@
-package indie.services;
+package indie.services.moduloReportes;
 
 import indie.models.moduloReportes.TipoMetrica;
-import indie.repositories.TipoMetricaRepository;
+import indie.repositories.moduloReportes.TipoMetricaRepository;
+import indie.services.BaseServiceImpl;
+
 import org.springframework.stereotype.Service;
 
 @Service

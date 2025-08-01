@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/calendario")
-public class CalendarioController extends BaseController<Calendario,Long> {
+public class CalendarioController extends BaseController<Calendario,String> {
 
     public CalendarioController(CalendarioService calendarioService) {
         super(calendarioService);
