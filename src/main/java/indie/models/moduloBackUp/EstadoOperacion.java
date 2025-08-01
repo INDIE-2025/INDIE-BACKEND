@@ -1,4 +1,7 @@
 package indie.models.moduloBackUp;
 
-public class EstadoOperacion {
+public enum EstadoOperacion {
+    EXITOSO,
+    FALLIDO,
+    EN_PROCESO
 }
