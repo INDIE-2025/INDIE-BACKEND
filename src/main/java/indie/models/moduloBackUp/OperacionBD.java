@@ -1,6 +1,8 @@
 package indie.models.moduloBackUp;
 
 import indie.models.BaseModel;
+import indie.models.enums.EstadoOperacion;
+import indie.models.enums.TipoOperacion;
 import indie.models.moduloUsuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;

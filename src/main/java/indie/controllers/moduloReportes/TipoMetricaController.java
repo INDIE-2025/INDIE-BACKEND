@@ -1,7 +1,9 @@
-package indie.controllers;
+package indie.controllers.moduloReportes;
 
+import indie.controllers.BaseController;
 import indie.models.moduloReportes.TipoMetrica;
-import indie.services.TipoMetricaService;
+import indie.services.moduloReportes.TipoMetricaService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

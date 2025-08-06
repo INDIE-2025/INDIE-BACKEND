@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/chat")
-public class ChatController extends BaseController<Chat,Long> {
+public class ChatController extends BaseController<Chat,String> {
 
     public ChatController(ChatService chatService){
         super(chatService);

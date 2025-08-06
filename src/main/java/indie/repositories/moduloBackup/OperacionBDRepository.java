@@ -1,4 +1,4 @@
-package indie.repositories;
+package indie.repositories.moduloBackup;
 
 import indie.models.moduloBackUp.OperacionBD;
 import org.springframework.data.jpa.repository.JpaRepository;

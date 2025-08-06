@@ -1,4 +1,4 @@
-package indie.models.moduloBackUp;
+package indie.models.enums;
 
 public enum EstadoOperacion {
     EXITOSO,
