@@ -1,7 +1,7 @@
 package indie.services.moduloMensajeria;
 
 import indie.models.moduloMensajeria.Chat;
-import indie.repositories.ChatRepository;
+import indie.repositories.moduloMensajeria.ChatRepository;
 import indie.services.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

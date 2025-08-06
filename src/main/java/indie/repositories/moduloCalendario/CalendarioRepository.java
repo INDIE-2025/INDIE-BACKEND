@@ -1,4 +1,4 @@
-package indie.repositories;
+package indie.repositories.moduloCalendario;
 
 import indie.models.moduloCalendario.Calendario;
 import indie.models.moduloUsuario.Usuario;

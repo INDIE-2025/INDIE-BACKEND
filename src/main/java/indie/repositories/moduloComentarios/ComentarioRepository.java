@@ -1,4 +1,4 @@
-package indie.repositories;
+package indie.repositories.moduloComentarios;
 
 import indie.models.moduloComentarios.ComentarUsuario;
 import org.springframework.data.jpa.repository.JpaRepository;

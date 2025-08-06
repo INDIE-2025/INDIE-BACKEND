@@ -1,9 +1,8 @@
 package indie.services.moduloComentarios;
 
 import indie.models.moduloComentarios.ComentarUsuario;
-import indie.repositories.ComentarioRepository;
+import indie.repositories.moduloComentarios.ComentarioRepository;
 import indie.services.BaseServiceImpl;
-import indie.services.moduloComentarios.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
