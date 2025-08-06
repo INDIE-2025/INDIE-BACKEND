@@ -1,7 +1,8 @@
-package indie.controllers;
+package indie.controllers.moduloMensajeria;
 
+import indie.controllers.BaseController;
 import indie.models.moduloMensajeria.Chat;
-import indie.services.ChatService;
+import indie.services.moduloMensajeria.ChatService;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 

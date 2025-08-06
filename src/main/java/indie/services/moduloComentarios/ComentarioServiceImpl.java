@@ -1,14 +1,16 @@
-package indie.services;
+package indie.services.moduloComentarios;
 
 import indie.models.moduloComentarios.ComentarUsuario;
 import indie.repositories.ComentarioRepository;
+import indie.services.BaseServiceImpl;
+import indie.services.moduloComentarios.ComentarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,String> implements ComentarioService{
+public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,String> implements ComentarioService {
 
     ComentarioRepository comentarioRepository;
 
