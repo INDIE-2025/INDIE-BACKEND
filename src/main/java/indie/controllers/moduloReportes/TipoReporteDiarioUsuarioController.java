@@ -8,7 +8,7 @@ import indie.services.moduloReportes.TipoReporteDiarioUsuarioService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/admin/reportes-mensuales")
+@RequestMapping("/api/admin/reportes-diarios-usuario")
 @CrossOrigin(origins = "*")
 public class TipoReporteDiarioUsuarioController extends BaseController<TipoReporteDiarioUsuario, String> {
     

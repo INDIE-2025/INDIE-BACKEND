@@ -29,6 +29,6 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
     }
 
     public Optional<Usuario> buscarPorEmail(String email) {
-        return Optional.ofNullable(usuarioRepository.findByEmail(email));
+        return Optional.ofNullable(usuarioRepository.findByEmailUsuario(email));
     }
 }
