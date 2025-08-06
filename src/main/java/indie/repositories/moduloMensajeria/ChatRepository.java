@@ -1,4 +1,4 @@
-package indie.repositories;
+package indie.repositories.moduloMensajeria;
 
 import indie.models.moduloMensajeria.Chat;
 import org.springframework.data.jpa.repository.JpaRepository;
