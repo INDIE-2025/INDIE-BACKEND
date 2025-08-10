@@ -1,9 +1,13 @@
 package indie.controllers.moduloBackup;
 
 import indie.controllers.BaseController;
+import indie.dtos.moduloBackup.OperacionBDCreateDto;
 import indie.models.moduloBackUp.OperacionBD;
 import indie.services.moduloBackup.OperacionBDService;
+import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -11,8 +15,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/admin/operacionesbd")
 public class OperacionBDController extends BaseController<OperacionBD, String>{
 
+    private final OperacionBDService operacionBDService;
+
     public OperacionBDController(OperacionBDService operacionBDService) {
         super(operacionBDService);
+        this.operacionBDService = operacionBDService;
+    }
+
+    @PostMapping("/by-email")
+    public ResponseEntity<OperacionBD> createWithUsuarioEmail(
+            @Valid @RequestBody OperacionBDCreateDto dto) {
+                OperacionBD created = operacionBDService.save(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     // Me parece que no hace falta ya que nunca voy a buscar operaciones, modificarlas ni eliminarlas,.
@@ -47,5 +61,4 @@ public class OperacionBDController extends BaseController<OperacionBD, String>{
     //         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     //     }
     // }
-
 }
