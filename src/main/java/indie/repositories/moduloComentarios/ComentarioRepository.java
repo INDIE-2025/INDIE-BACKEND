@@ -1,5 +1,6 @@
 package indie.repositories.moduloComentarios;
 
+import indie.dtos.moduloComentarios.ComentarioDTO;
 import indie.models.moduloComentarios.ComentarUsuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -12,9 +13,14 @@ import java.util.List;
 public interface ComentarioRepository extends JpaRepository<ComentarUsuario, String> {
 
 
-    @Query(value = "SELECT * FROM Comentario c WHERE c.id_usuario_comentado = :idUsuarioComentado",
-    nativeQuery = true)
-    List<ComentarUsuario> traerComentariosDeUnUsuario(@Param("idUsuarioComentado") String idUsuarioComentado);
+    @Query("SELECT new indie.dtos.moduloComentarios.ComentarioDTO(" +
+            "c.comentario, " +
+            "c.idUsuarioComentador.username, " +
+            "c.createdAt, " +
+            "c.idUsuarioComentador.id) " +
+            "FROM ComentarUsuario c " +
+            "WHERE c.idUsuarioComentado.id = :idUsuarioComentado")
+    List<ComentarioDTO> traerComentariosDeUnUsuario(@Param("idUsuarioComentado") String idUsuarioComentado);
 
 
 }

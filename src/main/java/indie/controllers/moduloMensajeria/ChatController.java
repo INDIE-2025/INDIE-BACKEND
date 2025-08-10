@@ -2,7 +2,8 @@ package indie.controllers.moduloMensajeria;
 
 import indie.controllers.BaseController;
 import indie.models.moduloMensajeria.Chat;
-import indie.services.moduloMensajeria.ChatService;
+import indie.services.moduloMensajeria.ChatServiceImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,7 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/chat")
 public class ChatController extends BaseController<Chat,String> {
 
-    public ChatController(ChatService chatService){
-        super(chatService);
+    @Autowired
+    protected ChatServiceImpl chatService;
+    public ChatController(ChatServiceImpl chatServiceImpl){
+        super(chatServiceImpl);
     }
 }

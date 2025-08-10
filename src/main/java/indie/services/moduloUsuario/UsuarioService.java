@@ -2,6 +2,8 @@ package indie.services.moduloUsuario;
 
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import indie.models.moduloUsuario.Usuario;

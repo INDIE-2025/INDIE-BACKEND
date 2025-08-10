@@ -1,18 +1,8 @@
 package indie.services.moduloCalendario;
 
 import indie.models.moduloCalendario.Calendario;
-import indie.repositories.moduloCalendario.CalendarioRepository;
-import indie.services.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import indie.services.BaseService;
 
-@Service
-public class CalendarioService extends BaseServiceImpl<Calendario,String> {
-    CalendarioRepository calendarioRepository;
+public interface CalendarioService extends BaseService<Calendario, String> {
 
-    @Autowired
-    public CalendarioService(CalendarioRepository calendarioRepository) {
-        super(calendarioRepository);
-        this.calendarioRepository = calendarioRepository;
-    }
 }

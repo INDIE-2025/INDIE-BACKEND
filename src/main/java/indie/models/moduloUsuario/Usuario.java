@@ -13,6 +13,8 @@ import java.util.Date;
 @AllArgsConstructor
 @Builder
 @Entity
+@Getter
+@Setter
 public class Usuario extends BaseModel {
 
     @NotNull
