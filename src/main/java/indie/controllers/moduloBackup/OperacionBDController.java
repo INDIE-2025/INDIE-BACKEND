@@ -1,12 +1,13 @@
 package indie.controllers.moduloBackup;
 
 import indie.controllers.BaseController;
-import indie.dtos.moduloBackup.OperacionBDCreateDto;
+import indie.dtos.moduloBackup.OperacionBDDTO;
 import indie.models.moduloBackUp.OperacionBD;
-import indie.services.moduloBackup.OperacionBDService;
-import jakarta.validation.Valid;
+import indie.services.moduloBackup.OperacionBDServiceImpl;
 
-import org.springframework.http.HttpStatus;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,19 +15,17 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/admin/operacionesbd")
 public class OperacionBDController extends BaseController<OperacionBD, String>{
+    
+    @Autowired
+    private OperacionBDServiceImpl operacionBDServiceImpl;
 
-    private final OperacionBDService operacionBDService;
-
-    public OperacionBDController(OperacionBDService operacionBDService) {
-        super(operacionBDService);
-        this.operacionBDService = operacionBDService;
+    public OperacionBDController(OperacionBDServiceImpl operacionBDServiceImpl) {
+        super(operacionBDServiceImpl);
     }
 
-    @PostMapping("/by-email")
-    public ResponseEntity<OperacionBD> createWithUsuarioEmail(
-            @Valid @RequestBody OperacionBDCreateDto dto) {
-                OperacionBD created = operacionBDService.save(dto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    @GetMapping("/obtener_operaciones")
+    public ResponseEntity<List<OperacionBDDTO>> obtenerOperaciones() {
+        return ResponseEntity.ok(operacionBDServiceImpl.obtenerOperacionesDTO());
     }
 
     // Me parece que no hace falta ya que nunca voy a buscar operaciones, modificarlas ni eliminarlas,.

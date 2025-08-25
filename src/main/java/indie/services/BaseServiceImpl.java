@@ -2,7 +2,6 @@ package indie.services;
 
 import java.util.List;
 
-import indie.repositories.moduloUsuario.SeguimientoUsuarioRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
