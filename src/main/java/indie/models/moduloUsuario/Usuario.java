@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
-import java.util.Date;
 
 @Data
 @NoArgsConstructor
@@ -18,7 +17,7 @@ import java.util.Date;
 public class Usuario extends BaseModel {
 
     @NotNull
-    private int nombreUsuario;
+    private String nombreUsuario;
     @NotNull
     private String apellidoUsuario;
     @NotNull
