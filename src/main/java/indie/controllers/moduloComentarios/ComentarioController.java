@@ -1,6 +1,7 @@
 package indie.controllers.moduloComentarios;
 
 import indie.controllers.BaseController;
+import indie.dtos.moduloComentarios.ComentarioDTO;
 import indie.models.moduloComentarios.ComentarUsuario;
 import indie.services.moduloComentarios.ComentarioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,11 +33,11 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
     @PostMapping("/realizarComentario")
     public ResponseEntity<?> realizarComentario(@RequestParam String comentario, @RequestParam String idUsuarioComentador, @RequestParam String idUsuarioComentado) {
         try {
-            comentarioService.realizarComentario(comentario, idUsuarioComentador, idUsuarioComentado);
-            return ResponseEntity.status(HttpStatus.CREATED).body("{\"message\": \"Comentario creado exitosamente\"}");
+            ComentarioDTO dto = comentarioService.realizarComentario(comentario, idUsuarioComentador, idUsuarioComentado);
+            return ResponseEntity.ok(dto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+                    .body("{\"error\": \"Error al realizar el comentario: " + e.getMessage() + "\"}");
         }
     }
 }

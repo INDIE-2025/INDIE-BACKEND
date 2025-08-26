@@ -9,6 +9,7 @@ import indie.services.BaseServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,15 +30,14 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
     @Override
     public List<ComentarioDTO> traerComentariosDeUnUsuario(String idUsuarioComentado) throws Exception {
         try {
-            List<ComentarioDTO> comentarios = comentarioRepository.traerComentariosDeUnUsuario(idUsuarioComentado);
-            return comentarios.isEmpty() ? List.of() : comentarios; // Devuelve una lista vacía si no hay comentarios
+            return comentarioRepository.traerComentariosDeUnUsuario(idUsuarioComentado);
         } catch (Exception e) {
             throw new Exception("Error al obtener comentarios: " + e.getMessage());
         }
     }
 
     @Override
-    public void realizarComentario(String comentario, String idUsuarioComentador, String idUsuarioComentado) throws Exception {
+    public ComentarioDTO realizarComentario(String comentario, String idUsuarioComentador, String idUsuarioComentado) throws Exception {
         try {
             Usuario usuarioComentador = usuarioRepository.findById(idUsuarioComentador)
                     .orElseThrow(() -> new Exception("Usuario comentador no encontrado"));
@@ -50,7 +50,15 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
                     .idUsuarioComentado(usuarioComentado)
                     .build();
 
-            comentarioRepository.save(nuevoComentario);
+            ComentarUsuario comentarioGuardado = comentarioRepository.save(nuevoComentario);
+
+            return new ComentarioDTO(
+                    comentarioGuardado.getComentario(),
+                    String.valueOf(usuarioComentador.getNombreUsuario()),
+                    LocalDateTime.now(),
+                    usuarioComentador.getId()
+            );
+
         } catch (Exception e) {
             throw new Exception("Error al realizar el comentario: " + e.getMessage());
         }
