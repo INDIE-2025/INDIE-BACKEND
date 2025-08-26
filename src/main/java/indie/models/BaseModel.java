@@ -2,6 +2,8 @@ package indie.models;
 
 import java.time.LocalDateTime;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -11,6 +13,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
+@Getter
+@Setter
 public abstract class BaseModel {
 
     @Id
@@ -24,6 +28,8 @@ public abstract class BaseModel {
     protected LocalDateTime updatedAt;
 
     protected LocalDateTime deletedAt;
+
+
 }
 
 

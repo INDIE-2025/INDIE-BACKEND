@@ -9,4 +9,6 @@ import java.util.List;
 public interface ComentarioService extends BaseService<ComentarUsuario, String> {
 
     List<ComentarioDTO> traerComentariosDeUnUsuario(String idUsuarioComentado) throws Exception;
+
+   void realizarComentario(String comentario, String idUsuarioComentador, String idUsuarioComentado) throws Exception;
 }
