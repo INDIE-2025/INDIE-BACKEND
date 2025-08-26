@@ -19,7 +19,7 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
         super(comentarioService);
     }
 
-    @GetMapping("/comentarios")
+    @GetMapping("/traercomentarios")
     public ResponseEntity<?> traerComentariosDeUnUsuario(@RequestParam String idUsuarioComentado) {
         try {
             return ResponseEntity.ok(comentarioService.traerComentariosDeUnUsuario(idUsuarioComentado));
