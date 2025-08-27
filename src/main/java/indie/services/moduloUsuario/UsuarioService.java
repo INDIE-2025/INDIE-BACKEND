@@ -1,7 +1,10 @@
 package indie.services.moduloUsuario;
 
+import indie.exceptions.EmailYaRegistradoException;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
+import indie.services.EmailService;
+import indie.services.VerificationTokenService;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,12 +14,19 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UsuarioService extends BaseServiceImpl<Usuario, String> {
 
     UsuarioRepository usuarioRepository;
-    private PasswordEncoder passwordEncoder;
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
+    EmailService emailService;
+
+    @Autowired
+    VerificationTokenService verificationTokenService;
 
     @Autowired
     public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
@@ -26,8 +36,27 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
     }
 
     public Usuario registrar(Usuario usuario) {
+
+        Usuario usuarioGuardado;
+
+        if (buscarPorEmail(usuario.getEmailUsuario()).isPresent()) {
+            throw new EmailYaRegistradoException("Email ya registrado");
+        }
+
+        // Encriptar la contraseña antes de guardar
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
-        return usuarioRepository.save(usuario);
+
+        try{
+           usuarioGuardado = save(usuario);
+        } catch (Exception error) {
+            throw new RuntimeException("Error al guardar el usuario: " + error.getMessage());
+        }
+
+        String token = UUID.randomUUID().toString();
+        verificationTokenService.crearToken(usuarioGuardado, token);
+        emailService.enviarEmailVerificacion(usuarioGuardado.getEmailUsuario(), token);
+
+        return usuarioGuardado;
     }
 
     public Optional<Usuario> buscarPorEmail(String email) {
