@@ -1,18 +1,31 @@
 package indie.controllers.moduloBackup;
 
 import indie.controllers.BaseController;
+import indie.dtos.moduloBackup.OperacionBDDTO;
 import indie.models.moduloBackUp.OperacionBD;
-import indie.services.moduloBackup.OperacionBDService;
+import indie.services.moduloBackup.OperacionBDServiceImpl;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
 @RestController
 @RequestMapping("/api/admin/operacionesbd")
 public class OperacionBDController extends BaseController<OperacionBD, String>{
+    
+    @Autowired
+    private OperacionBDServiceImpl operacionBDServiceImpl;
 
-    public OperacionBDController(OperacionBDService operacionBDService) {
-        super(operacionBDService);
+    public OperacionBDController(OperacionBDServiceImpl operacionBDServiceImpl) {
+        super(operacionBDServiceImpl);
+    }
+
+    @GetMapping("/obtener_operaciones")
+    public ResponseEntity<List<OperacionBDDTO>> obtenerOperaciones() {
+        return ResponseEntity.ok(operacionBDServiceImpl.obtenerOperacionesDTO());
     }
 
     // Me parece que no hace falta ya que nunca voy a buscar operaciones, modificarlas ni eliminarlas,.
@@ -47,5 +60,4 @@ public class OperacionBDController extends BaseController<OperacionBD, String>{
     //         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     //     }
     // }
-
 }

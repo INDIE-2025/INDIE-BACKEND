@@ -21,6 +21,7 @@ public class Usuario extends BaseModel {
 
     @NotNull
     private String nombreUsuario;
+
     @Email
     @NotNull
     private String emailUsuario;
