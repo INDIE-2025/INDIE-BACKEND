@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.5.3'
 	id 'io.spring.dependency-management' version '1.1.7'
+    id 'org.flywaydb.flyway' version '10.15.0'  // Actualizar versión
 }
 
 group = 'indie'
@@ -28,22 +29,39 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
  	implementation 'org.springframework.boot:spring-boot-starter-validation'
-	implementation 'org.springframework.security:spring-security-oauth2-client' // para integrar Auth0
+	implementation 'org.springframework.security:spring-security-oauth2-client'
+
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
 	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
-	implementation 'org.flywaydb:flyway-core:9.22.3'
-	implementation 'org.flywaydb:flyway-mysql:9.22.3'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+
+    implementation 'org.flywaydb:flyway-core'
+    implementation 'org.flywaydb:flyway-mysql'
+
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
+    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
-	compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
+
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+    annotationProcessor 'org.projectlombok:lombok'
+    compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+flyway {
+    url = 'jdbc:mysql://localhost:3306/indie_db?useSSL=false&serverTimezone=UTC'
+    user = 'root'
+    password = 'root1234'
+    locations = ['classpath:db/migration']
+    baselineOnMigrate = true
+    driver = 'com.mysql.cj.jdbc.Driver'  // Driver explícito
 }
 
 tasks.named('test') {
