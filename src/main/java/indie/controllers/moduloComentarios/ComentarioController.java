@@ -40,4 +40,27 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
                     .body("{\"error\": \"Error al realizar el comentario: " + e.getMessage() + "\"}");
         }
     }
+
+    @DeleteMapping("/eliminar")
+    public ResponseEntity<?> eliminarComentario(@RequestParam String idComentario, @RequestParam String idUsuario) {
+        try {
+            comentarioService.eliminarComentario(idComentario, idUsuario);
+            return ResponseEntity.ok("{\"message\": \"Comentario eliminado con éxito\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
+    @PostMapping("/denunciar")
+    public ResponseEntity<?> denunciarComentario(@RequestParam String idComentario, @RequestParam String idUsuario, @RequestParam String motivoDenuncia) {
+        try {
+            comentarioService.denunciarComentario(idComentario, idUsuario, motivoDenuncia);
+            return ResponseEntity.ok("{\"message\": \"Comentario denunciado con éxito\"}");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"error\": \"" + e.getMessage() + "\"}");
+        }
+    }
+
 }
