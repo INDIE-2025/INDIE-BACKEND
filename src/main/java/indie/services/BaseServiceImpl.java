@@ -2,10 +2,12 @@ package indie.services;
 
 import java.util.List;
 
+import indie.dtos.moduloBackup.OperacionBDCreateDto;
+import indie.models.moduloBackUp.OperacionBD;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
+public abstract class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
     protected final JpaRepository<T, ID> repository;
 
     public BaseServiceImpl(JpaRepository<T,ID> repository) {
@@ -43,5 +45,6 @@ public class BaseServiceImpl<T, ID> implements BaseService<T, ID> {
         }
         repository.deleteById(id);
     }
+
 }
 

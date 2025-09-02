@@ -1,5 +1,6 @@
 package indie.services.moduloBackup;
 
+import indie.dtos.moduloBackup.OperacionBDDTO;
 import org.springframework.stereotype.Service;
 
 import indie.dtos.moduloBackup.OperacionBDCreateDto;
@@ -8,6 +9,8 @@ import indie.models.moduloUsuario.Usuario;
 import indie.repositories.moduloBackup.OperacionBDRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
+
+import java.util.List;
 
 @Service
 public class OperacionBDServiceImpl extends BaseServiceImpl<OperacionBD, String> implements OperacionBDService {
@@ -35,5 +38,10 @@ public class OperacionBDServiceImpl extends BaseServiceImpl<OperacionBD, String>
         System.out.println("Guardando operacion: " + operacion);
 
         return operacionBDRepository.save(operacion);
+    }
+
+    @Override
+    public List<OperacionBDDTO> obtenerOperacionesDTO() {
+        return List.of();
     }
 }
