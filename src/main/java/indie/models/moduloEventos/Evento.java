@@ -7,12 +7,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
 
-@Data // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
+@Getter // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

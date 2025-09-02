@@ -4,10 +4,12 @@ import indie.models.BaseModel;
 import jakarta.persistence.Entity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
+@Getter // incluye @ToString, @EqualsAndHashCode
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

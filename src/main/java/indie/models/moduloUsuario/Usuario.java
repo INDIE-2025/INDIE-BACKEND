@@ -10,13 +10,12 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Entity
-@Getter
-@Setter
 public class Usuario extends BaseModel {
 
     @NotNull
