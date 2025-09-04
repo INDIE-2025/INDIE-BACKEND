@@ -29,6 +29,4 @@ public class ComentarUsuario extends BaseModel {
     @JoinColumn(name = "idUsuarioComentador")
     private Usuario idUsuarioComentador;
 
-
-
 }
