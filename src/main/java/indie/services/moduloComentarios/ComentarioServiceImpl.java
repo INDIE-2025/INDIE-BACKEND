@@ -89,11 +89,10 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
             Usuario usuario = usuarioRepository.findById(idUsuario)
                     .orElseThrow(() -> new Exception("Usuario no encontrado"));
 
-            Denuncia denuncia = Denuncia.builder()
-                    .idComentario(comentario)
-                    .idUsuario(usuario)
-                    .motivoDenuncia(motivoDenuncia)
-                    .build();
+            Denuncia denuncia = new Denuncia();
+            denuncia.setIdComentario(comentario);
+            denuncia.setIdUsuario(usuario);
+            denuncia.setMotivoDenuncia(motivoDenuncia);
 
             denunciaRepository.save(denuncia);
         } catch (Exception e) {
