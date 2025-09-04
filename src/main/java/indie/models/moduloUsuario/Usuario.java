@@ -18,7 +18,7 @@ import java.util.Date;
 public class Usuario extends BaseModel {
 
     @NotNull
-    private int nombreUsuario;
+    private String nombreUsuario;
     @NotNull
     private String apellidoUsuario;
     @NotNull
