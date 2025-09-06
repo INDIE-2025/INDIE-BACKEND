@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Getter
 @Setter
@@ -20,5 +19,5 @@ public class ComentarioDTO {
         this.createdAt = createdAt;
         this.idUsuarioComentador = idUsuarioComentador;
     }
-
 }
+

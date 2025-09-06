@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 
 @Service
@@ -70,15 +70,17 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
     }
 
     @Override
-    public void eliminarComentario(String idComentario, String idUsuario) {
+    public void eliminarComentario(String idComentario, String idUsuario) throws Exception {
         ComentarUsuario comentario = comentarioRepository.findById(idComentario)
-                .orElseThrow(() -> new RuntimeException("Comentario no encontrado"));
+                .orElseThrow(() -> new Exception("Comentario no encontrado"));
 
         if (!comentario.getIdUsuarioComentador().getId().equals(idUsuario)) {
-            throw new RuntimeException("No tienes permisos para eliminar este comentario");
+            throw new Exception("No tienes permisos para eliminar este comentario");
         }
-        comentarioRepository.delete(comentario);
+        comentario.setDeletedAt(LocalDateTime.now());
+        comentarioRepository.save(comentario);
     }
+
 
     @Override
     public void denunciarComentario(String idComentario, String idUsuario, String motivoDenuncia) throws Exception {

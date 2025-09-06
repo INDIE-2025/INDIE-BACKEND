@@ -37,20 +37,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
+        // DESHABILITAR SEGURIDAD PARA PRUEBAS
         http.csrf(AbstractHttpConfigurer::disable)
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll() // Solo login público
-                        .requestMatchers("/api/auth/register").permitAll() // Solo register público
-                        .requestMatchers("/api/auth/verify").permitAll() // Solo verificacion de email público
-                        .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
-                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
-                        .anyRequest().authenticated()
-                )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilter(new JwtAuthenticationFilter(authManager, jwtUtils))
-                .addFilter(new JwtAuthorizationFilter(authManager, jwtUtils, usuarioService));
-
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll() // Permitir todas las requests sin autenticación
+            );
+        // No agregamos filtros ni sessionManagement
         return http.build();
     }
 
