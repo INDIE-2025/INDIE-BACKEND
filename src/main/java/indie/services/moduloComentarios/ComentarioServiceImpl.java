@@ -42,7 +42,9 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
     }
 
     @Override
-    public ComentarioDTO realizarComentario(String comentario, String idUsuarioComentador, String idUsuarioComentado) throws Exception {
+    public ComentarioDTO realizarComentario(String comentario,
+                                            String idUsuarioComentador,
+                                            String idUsuarioComentado) throws Exception {
         try {
             Usuario usuarioComentador = usuarioRepository.findById(idUsuarioComentador)
                     .orElseThrow(() -> new Exception("Usuario comentador no encontrado"));
@@ -57,17 +59,20 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
             ComentarUsuario comentarioGuardado = comentarioRepository.save(nuevoComentario);
 
+        
             return new ComentarioDTO(
-                    comentarioGuardado.getComentario(),
-                    String.valueOf(usuarioComentador.getNombreUsuario()),
-                    LocalDateTime.now(),
-                    usuarioComentador.getId()
+                    comentarioGuardado.getId(),                    
+                    comentarioGuardado.getComentario(),            
+                    String.valueOf(usuarioComentador.getNombreUsuario()), 
+                    comentarioGuardado.getCreatedAt(),             
+                    usuarioComentador.getId()                     
             );
 
         } catch (Exception e) {
             throw new Exception("Error al realizar el comentario: " + e.getMessage());
         }
     }
+
 
     @Override
     public void eliminarComentario(String idComentario, String idUsuario) throws Exception {

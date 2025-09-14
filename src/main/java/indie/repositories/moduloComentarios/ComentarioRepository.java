@@ -25,5 +25,6 @@ public interface ComentarioRepository extends JpaRepository<ComentarUsuario, Str
       ORDER BY c.createdAt DESC
     """)
     List<ComentarioDTO> traerComentariosDeUnUsuario(@Param("idUsuarioComentado") String idUsuarioComentado);
+
 }
 
