@@ -28,6 +28,9 @@ public class EmailService {
     @Value("${app.verification.url}")
     private String verificationUrl;
 
+    @Value("http://localhost:4200/new-password?token=")
+    private String resetPasswordUrl;
+
     public void enviarEmailVerificacion(String toEmail, String token) {
         String subject = "Verifica tu cuenta";
         String verificationLink = verificationUrl + token;
@@ -60,7 +63,7 @@ public class EmailService {
         // Crear y guardar el token específico para reseteo de contraseña
         tokenService.crearToken(usuario, token, VerificationToken.TokenType.RESETEO_CONTRASENA);
 
-        String recoveryLink = verificationUrl + "recovery?token=" + token;
+        String recoveryLink = resetPasswordUrl + token;
 
         String body = "Has solicitado recuperar tu contraseña.\n\n" +
                 "Por favor, haz clic en el siguiente enlace para restablecer tu contraseña:\n" +
