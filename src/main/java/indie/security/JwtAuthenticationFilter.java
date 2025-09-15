@@ -2,7 +2,8 @@ package indie.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import indie.models.moduloUsuario.Usuario;
-import io.jsonwebtoken.io.IOException;
+import indie.dtos.auth.LoginResponse;
+import java.io.IOException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -95,8 +96,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
             res.setCharacterEncoding("UTF-8");
             
             // Crear respuesta con información del usuario
-            indie.dtos.auth.AuthResponseDTO response = 
-                indie.dtos.auth.AuthResponseDTO.fromUsuarioAndToken(usuario, token);
+            LoginResponse response = 
+                LoginResponse.fromUsuarioAndToken(usuario, token);
                 
             // Convertir a JSON usando ObjectMapper
             String jsonResponse = new ObjectMapper().writeValueAsString(response);

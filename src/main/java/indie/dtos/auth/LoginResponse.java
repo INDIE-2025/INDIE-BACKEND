@@ -5,15 +5,15 @@ import indie.models.moduloUsuario.Usuario;
 import lombok.Data;
 
 @Data
-public class AuthResponseDTO {
+public class LoginResponse {
     private String token;
-    private UsuarioDTO usuario;
+    private UserResponseDTO usuario;
 
-    public static AuthResponseDTO fromUsuarioAndToken(Usuario usuario, String token) {
-        AuthResponseDTO response = new AuthResponseDTO();
+    public static LoginResponse fromUsuarioAndToken(Usuario usuario, String token) {
+        LoginResponse response = new LoginResponse();
         response.setToken(token);
         
-        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        UserResponseDTO usuarioDTO = new UserResponseDTO();
         usuarioDTO.setId(usuario.getId());
         usuarioDTO.setNombre(usuario.getNombreUsuario());
         usuarioDTO.setApellido(usuario.getApellidoUsuario());
@@ -22,7 +22,7 @@ public class AuthResponseDTO {
         
         SubTipoUsuario subTipo = usuario.getSubTipoUsuario();
         if (subTipo != null) {
-            SubTipoUsuarioDTO subTipoDTO = new SubTipoUsuarioDTO();
+            UserSubTipoResponseDTO subTipoDTO = new UserSubTipoResponseDTO();
             subTipoDTO.setId(subTipo.getId());
             subTipoDTO.setNombreSubTipoUsuario(subTipo.getNombreSubTipoUsuario());
             usuarioDTO.setSubTipoUsuario(subTipoDTO);
@@ -34,17 +34,17 @@ public class AuthResponseDTO {
 }
 
 @Data
-public class UsuarioDTO {
+class UserResponseDTO {
     private String id;
     private String nombre;
     private String apellido;
     private String email;
     private String username;
-    private SubTipoUsuarioDTO subTipoUsuario;
+    private UserSubTipoResponseDTO subTipoUsuario;
 }
 
 @Data
-public class SubTipoUsuarioDTO {
+class UserSubTipoResponseDTO {
     private String id;
     private String nombreSubTipoUsuario;
 }
