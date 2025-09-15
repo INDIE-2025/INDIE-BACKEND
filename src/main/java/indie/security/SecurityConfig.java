@@ -56,13 +56,6 @@ public class SecurityConfig {
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilter(new JwtAuthenticationFilter(authManager, jwtUtils, usuarioService))
                 .addFilter(new JwtAuthorizationFilter(authManager, jwtUtils, usuarioService));
-
-
-        //    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        //    .authorizeHttpRequests(auth -> auth
-        //        .anyRequest().permitAll() // Permitir todas las requests sin autenticación
-        //    );
-        // No agregamos filtros ni sessionManagement
       
         return http.build();
     }

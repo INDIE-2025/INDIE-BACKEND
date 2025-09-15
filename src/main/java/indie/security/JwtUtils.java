@@ -16,7 +16,7 @@ public class JwtUtils {
     private final SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes());
     private final long EXPIRATION = 86400000; // 1 día
 
-    // Método simple que solo incluye el email
+    // Metodo simple que solo incluye el email
     public String generarToken(String email) {
         return Jwts.builder()
                 .setSubject(email)
@@ -26,7 +26,7 @@ public class JwtUtils {
                 .compact();
     }
     
-    // Método que incluye más información del usuario
+    // Metodo que incluye más información del usuario
     public String generarToken(String email, String id, String nombre, String apellido) {
         return Jwts.builder()
                 .setSubject(email)
