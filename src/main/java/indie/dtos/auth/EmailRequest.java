@@ -1,6 +1,11 @@
 package indie.dtos.auth;
 
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+
 public class EmailRequest {
+    @NotBlank
+    @Email
     private String email;
 
     public EmailRequest() {}
