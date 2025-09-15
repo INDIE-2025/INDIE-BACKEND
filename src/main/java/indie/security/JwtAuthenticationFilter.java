@@ -7,6 +7,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
     private JwtUtils jwtUtils;
+    
+    @Autowired
+    private indie.services.moduloUsuario.UsuarioService usuarioService;
 
     public JwtAuthenticationFilter(AuthenticationManager authManager, JwtUtils jwtUtils) {
         this.authenticationManager = authManager;
@@ -62,6 +66,8 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
         }
     }
 
+    // UsuarioService se inyectó a nivel de clase
+    
     @Override
     protected void successfulAuthentication(HttpServletRequest req, HttpServletResponse res, FilterChain chain,
                                             Authentication auth) throws IOException {
@@ -70,14 +76,30 @@ public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilte
 
             String email = ((User) auth.getPrincipal()).getUsername();
             System.out.println("✓ Email del principal: " + email);
-
-            String token = jwtUtils.generarToken(email);
+            
+            // Buscar información del usuario
+            indie.models.moduloUsuario.Usuario usuario = usuarioService.buscarPorEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+            
+            // Generar token con toda la información necesaria
+            String token = jwtUtils.generarToken(
+                email, 
+                usuario.getId(),  // getId() devuelve Long desde BaseModel
+                usuario.getNombreUsuario(),
+                usuario.getApellidoUsuario()
+            );
+            
             System.out.println("✓ Token generado: " + token.substring(0, 20) + "...");
 
             res.setContentType("application/json");
             res.setCharacterEncoding("UTF-8");
-
-            String jsonResponse = "{\"token\": \"" + token + "\"}";
+            
+            // Crear respuesta con información del usuario
+            indie.dtos.auth.AuthResponseDTO response = 
+                indie.dtos.auth.AuthResponseDTO.fromUsuarioAndToken(usuario, token);
+                
+            // Convertir a JSON usando ObjectMapper
+            String jsonResponse = new ObjectMapper().writeValueAsString(response);
             res.getWriter().write(jsonResponse);
             res.getWriter().flush();
 
