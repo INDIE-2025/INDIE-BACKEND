@@ -33,18 +33,3 @@ public class AuthResponseDTO {
     }
 }
 
-@Data
-public class UsuarioDTO {
-    private String id;
-    private String nombre;
-    private String apellido;
-    private String email;
-    private String username;
-    private SubTipoUsuarioDTO subTipoUsuario;
-}
-
-@Data
-public class SubTipoUsuarioDTO {
-    private String id;
-    private String nombreSubTipoUsuario;
-}

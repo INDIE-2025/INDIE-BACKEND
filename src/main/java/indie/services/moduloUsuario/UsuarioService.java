@@ -63,6 +63,10 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
         return usuarioGuardado;
     }
 
+    public Optional<Usuario> findByUsername(String username) {
+        return Optional.ofNullable(usuarioRepository.findByUsername(username));
+    }
+
     public Optional<Usuario> buscarPorEmail(String email) {
         return Optional.ofNullable(usuarioRepository.findByEmailUsuario(email));
     }
