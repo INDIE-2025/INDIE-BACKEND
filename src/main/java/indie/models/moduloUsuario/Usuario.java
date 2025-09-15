@@ -2,13 +2,17 @@ package indie.models.moduloUsuario;
 
 import indie.models.BaseModel;
 import indie.models.moduloCalendario.Calendario;
+import indie.models.moduloEventos.Evento;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Data
 @NoArgsConstructor
@@ -45,5 +49,9 @@ public class Usuario extends BaseModel {
     public boolean isVerificado() {
         return fechaVerificacion != null;
     }
+
+    @OneToMany(mappedBy = "idUsuario", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonIgnore // evita recursion infinita al serializar JSON
+    private List<Evento> eventos = new ArrayList<>();
 
 }
