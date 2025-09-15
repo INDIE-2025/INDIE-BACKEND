@@ -1,7 +1,7 @@
 package indie.models.moduloEventos;
 
 import indie.models.BaseModel;
-import indie.models.enums.EstadoColaboración;
+import indie.models.enums.EstadoColaboracion;
 import indie.models.moduloUsuario.Usuario;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -39,7 +39,7 @@ public class Colaboracion extends BaseModel {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    private EstadoColaboración estado;
+    private EstadoColaboracion estado;
 
 
 }

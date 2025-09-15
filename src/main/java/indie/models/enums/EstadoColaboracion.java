@@ -1,6 +1,6 @@
 package indie.models.enums;
 
-public enum EstadoColaboración {
+public enum EstadoColaboracion {
     PENDIENTE,
     ACEPTADA,
     RECHAZADA,
