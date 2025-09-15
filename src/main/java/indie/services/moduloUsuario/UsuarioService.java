@@ -43,6 +43,10 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
             throw new EmailYaRegistradoException("Email ya registrado");
         }
 
+        if(usuario.getApellidoUsuario()==null){
+            usuario.setApellidoUsuario("p");
+        }
+
         // Encriptar la contraseña antes de guardar
         usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
 
