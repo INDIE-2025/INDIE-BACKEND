@@ -38,8 +38,10 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
             throw new indie.exceptions.EventoDuplicadoException("Ya existe un evento con el mismo título y fecha");
         }
 
-        Usuario creador = usuarioRepository.findById(r.idUsuario)
-        .orElseThrow(() -> new IllegalArgumentException("Creador inexistente"));
+        Usuario creador = usuarioRepository.findByEmailUsuario(r.idUsuario);
+        if (creador == null) {
+            throw new IllegalArgumentException("Creador inexistente");
+        }
         
         // Si estamos publicando desde un borrador, marcar el borrador como dado de baja
         if (r.estadoEvento != null && r.estadoEvento.equals("PUBLICADO")) {
@@ -76,8 +78,10 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
 
     @Transactional
     public EventoResponse guardarBorrador(crearEventoDTO r){
-        Usuario creador = usuarioRepository.findById(r.idUsuario)
-            .orElseThrow(() -> new IllegalArgumentException("Creador inexistente"));
+        Usuario creador = usuarioRepository.findByEmailUsuario(r.idUsuario);
+        if (creador == null) {
+            throw new IllegalArgumentException("Creador inexistente");
+        }
 
         Evento e = new Evento();
         e.setTituloEvento(r.titulo);
@@ -107,16 +111,27 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         return out;
     }
     
-    public List<Evento> obtenerBorradoresPorUsuario(String idUsuario){
-        return eventoRepository.findByEstadoEventoAndIdUsuario(indie.models.enums.eventoEstado.BORRADOR, idUsuario);
+    public List<Evento> obtenerBorradoresPorUsuario(String userEmail){
+        // Si se recibe un email, buscar primero el usuario para obtener su ID
+        Usuario usuario = usuarioRepository.findByEmailUsuario(userEmail);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        return eventoRepository.findByEstadoEventoAndIdUsuario(indie.models.enums.eventoEstado.BORRADOR, usuario.getId());
     }
     
     @Transactional
-    public void marcarBorradorComoBaja(String titulo, String idUsuario) {
+    public void marcarBorradorComoBaja(String titulo, String userEmail) {
+        // Si se recibe un email, buscar primero el usuario para obtener su ID
+        Usuario usuario = usuarioRepository.findByEmailUsuario(userEmail);
+        if (usuario == null) {
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        
         Optional<Evento> borrador = eventoRepository.findByTituloAndEstadoAndIdUsuario(
             titulo, 
             indie.models.enums.eventoEstado.BORRADOR, 
-            idUsuario
+            usuario.getId()
         );
         
         borrador.ifPresent(e -> {

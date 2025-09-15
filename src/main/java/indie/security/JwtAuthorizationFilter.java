@@ -47,10 +47,15 @@ public class JwtAuthorizationFilter extends BasicAuthenticationFilter {
             Usuario usuario = usuarioService.buscarPorEmail(email).orElse(null);
 
             if (usuario != null) {
+                String role = "USER";
+                if (usuario.getSubTipoUsuario() != null && usuario.getSubTipoUsuario().getNombreSubTipoUsuario() != null) {
+                    role = usuario.getSubTipoUsuario().getNombreSubTipoUsuario();
+                }
+                
                 UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(
                         usuario.getEmailUsuario(),
                         null,
-                        List.of(new SimpleGrantedAuthority("ROLE_" + usuario.getSubTipoUsuario().getNombreSubTipoUsuario()))
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role))
                 );
                 SecurityContextHolder.getContext().setAuthentication(auth);
             }
