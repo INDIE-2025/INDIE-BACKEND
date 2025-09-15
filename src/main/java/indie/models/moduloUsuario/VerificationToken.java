@@ -17,9 +17,17 @@ public class VerificationToken {
 
     private String token;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     private LocalDateTime expiryDate;
+
+    @Enumerated(EnumType.STRING)
+    private TokenType tipo;
+
+    public enum TokenType {
+        VERIFICACION_CUENTA,
+        RESETEO_CONTRASENA
+    }
 }
