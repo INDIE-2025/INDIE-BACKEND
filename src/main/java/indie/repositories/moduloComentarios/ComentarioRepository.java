@@ -12,15 +12,19 @@ import java.util.List;
 @Repository
 public interface ComentarioRepository extends JpaRepository<ComentarUsuario, String> {
 
-
-    @Query("SELECT new indie.dtos.moduloComentarios.ComentarioDTO(" +
-            "c.comentario, " +
-            "c.idUsuarioComentador.username, " +
-            "c.createdAt, " +
-            "c.idUsuarioComentador.id) " +
-            "FROM ComentarUsuario c " +
-            "WHERE c.idUsuarioComentado.id = :idUsuarioComentado")
+    @Query("""
+      SELECT new indie.dtos.moduloComentarios.ComentarioDTO(
+        c.comentario,
+        c.idUsuarioComentador.username, 
+        c.createdAt,
+        c.idUsuarioComentador.id
+      )
+      FROM ComentarUsuario c
+      WHERE c.idUsuarioComentado.id = :idUsuarioComentado
+        AND c.deletedAt IS NULL
+      ORDER BY c.createdAt DESC
+    """)
     List<ComentarioDTO> traerComentariosDeUnUsuario(@Param("idUsuarioComentado") String idUsuarioComentado);
 
-
 }
+

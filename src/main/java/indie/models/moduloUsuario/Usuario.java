@@ -20,8 +20,8 @@ public class Usuario extends BaseModel {
 
     @NotNull
     private String nombreUsuario;
-
-    @Email
+    @NotNull
+    private String apellidoUsuario;
     @NotNull
     private String emailUsuario;
     @NotNull

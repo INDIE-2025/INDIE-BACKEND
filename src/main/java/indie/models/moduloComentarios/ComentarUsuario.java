@@ -2,6 +2,7 @@ package indie.models.moduloComentarios;
 
 import indie.models.BaseModel;
 import indie.models.moduloUsuario.Usuario;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -21,14 +22,14 @@ import lombok.Setter;
 @Table(name = "Comentario")
 public class ComentarUsuario extends BaseModel {
 
+    @Column(nullable = false, length = 1000)
     private String comentario;
+
     @ManyToOne
-    @JoinColumn(name="idUsuarioComentado")
+    @JoinColumn(name="idUsuarioComentado",  nullable = false)
     private Usuario idUsuarioComentado;
     @ManyToOne
-    @JoinColumn(name = "idUsuarioComentador")
+    @JoinColumn(name = "idUsuarioComentador", nullable = false)
     private Usuario idUsuarioComentador;
-
-
 
 }
