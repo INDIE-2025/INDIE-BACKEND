@@ -18,61 +18,64 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
     private final SeguimientoUsuarioRepository seguimientoUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
 
-    public SeguimientoUsuarioService(SeguimientoUsuarioRepository seguimientoUsuarioRepository, 
-                                   UsuarioRepository usuarioRepository) {
+    public SeguimientoUsuarioService(SeguimientoUsuarioRepository seguimientoUsuarioRepository,
+                                     UsuarioRepository usuarioRepository) {
         super(seguimientoUsuarioRepository);
         this.seguimientoUsuarioRepository = seguimientoUsuarioRepository;
         this.usuarioRepository = usuarioRepository;
     }
 
     /**
-     * Seguir a un usuario
+     * Seguir a un usuario (reactiva si existía soft-deleted).
      */
     @Transactional
     public SeguimientoUsuario seguirUsuario(String seguidorId, String seguidoId) {
         if (seguidorId.equals(seguidoId)) {
             throw new IllegalArgumentException("Un usuario no puede seguirse a sí mismo");
         }
-        
+
         Usuario seguidor = usuarioRepository.findById(seguidorId)
                 .orElseThrow(() -> new RuntimeException("Usuario seguidor no encontrado"));
         Usuario seguido = usuarioRepository.findById(seguidoId)
                 .orElseThrow(() -> new RuntimeException("Usuario a seguir no encontrado"));
 
-        // Buscar si existe una relación previa (incluyendo eliminadas lógicamente)
-        SeguimientoUsuario relacionExistente = seguimientoUsuarioRepository.findBySeguidorAndSeguidoIncludingDeleted(seguidorId, seguidoId)
-                .orElse(null);
-
-        if (relacionExistente != null) {
-            // Si la relación existe y no está eliminada lógicamente
-            if (relacionExistente.getDeletedAt() == null && !relacionExistente.isBloqueado()) {
-                throw new RuntimeException("Ya sigues a este usuario");
-            }
-            
-            // Si está bloqueado
-            if (relacionExistente.isBloqueado() && relacionExistente.getDeletedAt() == null) {
-                throw new RuntimeException("No puedes seguir a un usuario que has bloqueado");
-            }
-            
-            // Si fue eliminada lógicamente o bloqueada, reactivar la relación
-            relacionExistente.setBloqueado(false);
-            relacionExistente.setDeletedAt(null);
-            relacionExistente.setUpdatedAt(LocalDateTime.now());
-            return seguimientoUsuarioRepository.save(relacionExistente);
+        // si está bloqueado activamente -> no permitir follow
+        if (seguimientoUsuarioRepository.isUsuarioBloqueado(seguidorId, seguidoId)) {
+            throw new RuntimeException("No puedes seguir a un usuario que has bloqueado");
         }
 
-        // Crear nueva relación si no existe ninguna previa
-        SeguimientoUsuario seguimiento = SeguimientoUsuario.builder()
+        // ¿ya existe relación activa de follow?
+        if (seguimientoUsuarioRepository.findBySeguidorAndSeguido(seguidorId, seguidoId)
+                .filter(s -> !s.isBloqueado()) // activa y no bloqueada
+                .isPresent()) {
+            throw new RuntimeException("Ya sigues a este usuario");
+        }
+
+        // Buscar relación previa (incluye soft-deleted)
+        SeguimientoUsuario relPrev =
+                seguimientoUsuarioRepository.findBySeguidorAndSeguidoIncludingDeleted(seguidorId, seguidoId)
+                        .orElse(null);
+
+        if (relPrev != null) {
+            // Reactivar como follow (activa, no bloqueada)
+            relPrev.setBloqueado(false);
+            relPrev.setDeletedAt(null);
+            relPrev.setUpdatedAt(LocalDateTime.now());
+            return seguimientoUsuarioRepository.save(relPrev);
+        }
+
+        // Crear nueva
+        SeguimientoUsuario nueva = SeguimientoUsuario.builder()
                 .usuarioSeguidor(seguidor)
                 .usuarioSeguido(seguido)
                 .bloqueado(false)
                 .build();
 
-        return seguimientoUsuarioRepository.save(seguimiento);
+        return seguimientoUsuarioRepository.save(nueva);
     }
 
     /**
-     * Dejar de seguir a un usuario (baja lógica)
+     * Dejar de seguir (soft delete).
      */
     @Transactional
     public void dejarDeSeguirUsuario(String seguidorId, String seguidoId) {
@@ -80,21 +83,18 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
             throw new IllegalArgumentException("Un usuario no puede dejar de seguirse a sí mismo");
         }
 
-        SeguimientoUsuario seguimiento = seguimientoUsuarioRepository.findBySeguidorAndSeguido(seguidorId, seguidoId)
+        // Solo relaciones activas (findBySeguidorAndSeguido ya filtra deletedAt IS NULL)
+        SeguimientoUsuario relActiva = seguimientoUsuarioRepository.findBySeguidorAndSeguido(seguidorId, seguidoId)
                 .orElseThrow(() -> new RuntimeException("No sigues a este usuario"));
 
-        // Verificar que la relación no esté ya eliminada (baja lógica)
-        if (seguimiento.getDeletedAt() != null) {
-            throw new RuntimeException("No sigues a este usuario");
-        }
-
-        // Baja lógica: establecer deletedAt en lugar de eliminar físicamente
-        seguimiento.setDeletedAt(LocalDateTime.now());
-        seguimientoUsuarioRepository.save(seguimiento);
+        // Si estaba bloqueada, igualmente se soft-deleted y deja de estar activa
+        relActiva.setDeletedAt(LocalDateTime.now());
+        relActiva.setUpdatedAt(LocalDateTime.now());
+        seguimientoUsuarioRepository.save(relActiva);
     }
 
     /**
-     * Bloquear a un usuario
+     * Bloquear a un usuario (convierte la relación a bloqueada activa).
      */
     @Transactional
     public SeguimientoUsuario bloquearUsuario(String seguidorId, String usuarioABloquearId) {
@@ -104,38 +104,30 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
 
         Usuario seguidor = usuarioRepository.findById(seguidorId)
                 .orElseThrow(() -> new RuntimeException("Usuario bloqueador no encontrado"));
-        Usuario usuarioABloquear = usuarioRepository.findById(usuarioABloquearId)
+        Usuario bloqueado = usuarioRepository.findById(usuarioABloquearId)
                 .orElseThrow(() -> new RuntimeException("Usuario a bloquear no encontrado"));
 
-        // Verificar si ya está bloqueado
+        // si ya hay bloqueo activo -> error
         if (seguimientoUsuarioRepository.isUsuarioBloqueado(seguidorId, usuarioABloquearId)) {
             throw new RuntimeException("Este usuario ya está bloqueado");
         }
 
-        // Buscar si existe una relación previa (incluyendo eliminadas lógicamente)
-        SeguimientoUsuario relacionExistente = seguimientoUsuarioRepository.findBySeguidorAndSeguidoIncludingDeleted(seguidorId, usuarioABloquearId)
-                .orElse(null);
+        SeguimientoUsuario rel = seguimientoUsuarioRepository
+                .findBySeguidorAndSeguidoIncludingDeleted(seguidorId, usuarioABloquearId)
+                .orElseGet(() -> SeguimientoUsuario.builder()
+                        .usuarioSeguidor(seguidor)
+                        .usuarioSeguido(bloqueado)
+                        .build());
 
-        if (relacionExistente != null) {
-            // Si existe una relación activa de seguimiento, la convertimos a bloqueo
-            relacionExistente.setBloqueado(true);
-            relacionExistente.setDeletedAt(null); // Asegurar que esté activa
-            relacionExistente.setUpdatedAt(LocalDateTime.now());
-            return seguimientoUsuarioRepository.save(relacionExistente);
-        }
+        rel.setBloqueado(true);
+        rel.setDeletedAt(null); // activa (para que el bloqueo esté vigente)
+        rel.setUpdatedAt(LocalDateTime.now());
 
-        // Crear nueva relación de bloqueo si no existe ninguna previa
-        SeguimientoUsuario bloqueo = SeguimientoUsuario.builder()
-                .usuarioSeguidor(seguidor)
-                .usuarioSeguido(usuarioABloquear)
-                .bloqueado(true)
-                .build();
-
-        return seguimientoUsuarioRepository.save(bloqueo);
+        return seguimientoUsuarioRepository.save(rel);
     }
 
     /**
-     * Desbloquear a un usuario
+     * Desbloquear a un usuario (no reactiva follow: elimina lógicamente la relación).
      */
     @Transactional
     public void desbloquearUsuario(String seguidorId, String usuarioADesbloqueaId) {
@@ -147,77 +139,60 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
             throw new RuntimeException("Este usuario no está bloqueado");
         }
 
-        // Buscar la relación de bloqueo activa
-        SeguimientoUsuario seguimiento = seguimientoUsuarioRepository.findBySeguidorAndSeguido(seguidorId, usuarioADesbloqueaId)
+        // Relación activa (bloqueada) -> soft delete
+        SeguimientoUsuario rel = seguimientoUsuarioRepository
+                .findBySeguidorAndSeguido(seguidorId, usuarioADesbloqueaId)
                 .orElseThrow(() -> new RuntimeException("Relación de bloqueo no encontrada"));
-        
-        // Realizar eliminación lógica de la relación de bloqueo
-        seguimiento.setDeletedAt(LocalDateTime.now());
-        seguimiento.setUpdatedAt(LocalDateTime.now());
-        seguimientoUsuarioRepository.save(seguimiento);
+
+        rel.setDeletedAt(LocalDateTime.now());
+        rel.setUpdatedAt(LocalDateTime.now());
+        seguimientoUsuarioRepository.save(rel);
     }
 
-    /**
-     * Traer seguidores de un usuario
-     */
+    /* ===================== LECTURAS (readOnly) ===================== */
+
+    @Transactional(readOnly = true)
     public List<Usuario> traerSeguidores(String usuarioId) {
         usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         return seguimientoUsuarioRepository.findSeguidoresByUsuarioId(usuarioId);
     }
 
-    /**
-     * Traer seguidos de un usuario
-     */
+    @Transactional(readOnly = true)
     public List<Usuario> traerSeguidos(String usuarioId) {
         usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         return seguimientoUsuarioRepository.findSeguidosByUsuarioId(usuarioId);
     }
 
-    /**
-     * Traer usuarios bloqueados por un usuario
-     */
+    @Transactional(readOnly = true)
     public List<Usuario> traerUsuariosBloqueados(String usuarioId) {
         usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         return seguimientoUsuarioRepository.findUsuariosBloqueadosByUsuarioId(usuarioId);
     }
 
-    /**
-     * Contar seguidores de un usuario
-     */
+    @Transactional(readOnly = true)
     public long contarSeguidores(String usuarioId) {
         return seguimientoUsuarioRepository.countSeguidoresByUsuarioId(usuarioId);
     }
 
-    /**
-     * Contar seguidos de un usuario
-     */
+    @Transactional(readOnly = true)
     public long contarSeguidos(String usuarioId) {
         return seguimientoUsuarioRepository.countSeguidosByUsuarioId(usuarioId);
     }
 
-    /**
-     * Verificar si un usuario sigue a otro
-     */
+    @Transactional(readOnly = true)
     public boolean verificarSiSigue(String seguidorId, String seguidoId) {
         return seguimientoUsuarioRepository.existsBySeguidorAndSeguido(seguidorId, seguidoId);
     }
 
-    /**
-     * Verificar si un usuario está bloqueado por otro
-     */
+    @Transactional(readOnly = true)
     public boolean verificarSiEstaBloqueado(String seguidorId, String seguidoId) {
         return seguimientoUsuarioRepository.isUsuarioBloqueado(seguidorId, seguidoId);
     }
 
-    /**
-     * Obtener estadísticas de seguimiento de un usuario
-     */
+    @Transactional(readOnly = true)
     public EstadisticasSeguimientoDTO obtenerEstadisticas(String usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
@@ -231,5 +206,4 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
                 .totalSeguidos(contarSeguidos(usuarioId))
                 .build();
     }
-
 }
