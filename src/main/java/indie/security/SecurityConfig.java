@@ -49,6 +49,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/reset-password").permitAll() // Solo verificacion de email público
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
+                        .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
                         .requestMatchers("/error").permitAll() // Permitir acceso a la página de error
                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
                        .anyRequest().authenticated()
