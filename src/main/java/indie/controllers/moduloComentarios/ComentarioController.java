@@ -4,20 +4,27 @@ import indie.controllers.BaseController;
 import indie.dtos.moduloComentarios.ComentarioDTO;
 import indie.models.moduloComentarios.ComentarUsuario;
 import indie.services.moduloComentarios.ComentarioServiceImpl;
+import indie.services.moduloUsuario.UsuarioService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
 
 @RestController
 @RequestMapping("/api/comentario")
 public class ComentarioController extends BaseController<ComentarUsuario,String> {
 
-    @Autowired
-    protected ComentarioServiceImpl comentarioService;
+    private final ComentarioServiceImpl comentarioService;
+    private final UsuarioService usuarioService;
 
-    public ComentarioController(ComentarioServiceImpl comentarioService){
+    @Autowired
+    public ComentarioController(ComentarioServiceImpl comentarioService, UsuarioService usuarioService){
         super(comentarioService);
+        this.comentarioService = comentarioService;
+        this.usuarioService = usuarioService;
     }
 
     @GetMapping("/traercomentarios")
@@ -30,10 +37,21 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
         }
     }
 
+    
     @PostMapping("/realizarComentario")
-    public ResponseEntity<?> realizarComentario(@RequestParam String comentario, @RequestParam String idUsuarioComentador, @RequestParam String idUsuarioComentado) {
+    public ResponseEntity<?> realizarComentario(
+            @RequestParam String comentario,
+            @RequestParam String idUsuarioComentado,
+            @AuthenticationPrincipal String email
+    ) {
         try {
-            ComentarioDTO dto = comentarioService.realizarComentario(comentario, idUsuarioComentador, idUsuarioComentado);
+            String idUsuarioComentador = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email))
+                    .getId();
+
+            ComentarioDTO dto = comentarioService.realizarComentario(
+                    comentario, idUsuarioComentador, idUsuarioComentado
+            );
             return ResponseEntity.ok(dto);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -41,9 +59,17 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
         }
     }
 
+   
     @DeleteMapping("/eliminar")
-    public ResponseEntity<?> eliminarComentario(@RequestParam String idComentario, @RequestParam String idUsuario) {
+    public ResponseEntity<?> eliminarComentario(
+            @RequestParam String idComentario,
+            @AuthenticationPrincipal String email
+    ) {
         try {
+            String idUsuario = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email))
+                    .getId();
+
             comentarioService.eliminarComentario(idComentario, idUsuario);
             return ResponseEntity.ok("{\"message\": \"Comentario eliminado con éxito\"}");
         } catch (Exception e) {
@@ -52,9 +78,18 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
         }
     }
 
+  
     @PostMapping("/denunciar")
-    public ResponseEntity<?> denunciarComentario(@RequestParam String idComentario, @RequestParam String idUsuario, @RequestParam String motivoDenuncia) {
+    public ResponseEntity<?> denunciarComentario(
+            @RequestParam String idComentario,
+            @RequestParam String motivoDenuncia,
+            @AuthenticationPrincipal String email
+    ) {
         try {
+            String idUsuario = usuarioService.buscarPorEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado: " + email))
+                    .getId();
+
             comentarioService.denunciarComentario(idComentario, idUsuario, motivoDenuncia);
             return ResponseEntity.ok("{\"message\": \"Comentario denunciado con éxito\"}");
         } catch (Exception e) {
@@ -62,5 +97,5 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
                     .body("{\"error\": \"" + e.getMessage() + "\"}");
         }
     }
-
 }
+

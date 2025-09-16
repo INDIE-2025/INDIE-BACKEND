@@ -8,7 +8,6 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,13 +18,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private AuthenticationManager authenticationManager;
     private JwtUtils jwtUtils;
-    
-    @Autowired
     private indie.services.moduloUsuario.UsuarioService usuarioService;
 
-    public JwtAuthenticationFilter(AuthenticationManager authManager, JwtUtils jwtUtils) {
+    public JwtAuthenticationFilter(AuthenticationManager authManager, JwtUtils jwtUtils, indie.services.moduloUsuario.UsuarioService usuarioService) {
         this.authenticationManager = authManager;
         this.jwtUtils = jwtUtils;
+        this.usuarioService = usuarioService;
         setFilterProcessesUrl("/api/auth/login");
     }
 

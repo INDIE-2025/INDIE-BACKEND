@@ -7,3 +7,4 @@ public class SubTipoUsuarioDTO {
     private String id;
     private String nombreSubTipoUsuario;
 }
+

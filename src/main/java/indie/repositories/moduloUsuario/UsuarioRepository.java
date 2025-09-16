@@ -13,6 +13,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
 
     boolean existsByEmailUsuario(String emailUsuario);
 
+
     List<Usuario> findAllByDeletedAtIsNull();
 
     long countBySubTipoUsuario_TipoUsuario_IdAndDeletedAtIsNull(String tipoUsuarioId);
@@ -20,4 +21,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     Optional<Usuario> findByEmailUsuarioIgnoreCase(String emailUsuario);
 
     boolean existsByEmailUsuarioIgnoreCase(String emailUsuario);
+
+    Usuario findByUsername(String username);
+
 }

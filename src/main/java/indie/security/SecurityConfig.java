@@ -37,7 +37,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-        // DESHABILITAR SEGURIDAD PARA PRUEBAS
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
@@ -52,18 +51,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
                         .requestMatchers("/error").permitAll() // Permitir acceso a la página de error
                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
-                       .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilter(new JwtAuthenticationFilter(authManager, jwtUtils))
+                .addFilter(new JwtAuthenticationFilter(authManager, jwtUtils, usuarioService))
                 .addFilter(new JwtAuthorizationFilter(authManager, jwtUtils, usuarioService));
-
-
-        //    .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-        //    .authorizeHttpRequests(auth -> auth
-        //        .anyRequest().permitAll() // Permitir todas las requests sin autenticación
-        //    );
-        // No agregamos filtros ni sessionManagement
       
         return http.build();
     }
