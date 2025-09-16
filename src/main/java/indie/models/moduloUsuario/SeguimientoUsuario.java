@@ -2,7 +2,6 @@ package indie.models.moduloUsuario;
 
 import indie.models.BaseModel;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -23,11 +22,7 @@ public class SeguimientoUsuario extends BaseModel {
 
     @NotNull
     private boolean bloqueado = false;
-
-    @NotNull
-    private LocalDateTime fechaDesdeSeguimientoUsuario;
-    private LocalDateTime fechaHastaSeguimientoUsuario;
-
+    
     @ManyToOne
     @NotNull
     private Usuario usuarioSeguido;
