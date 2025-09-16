@@ -157,7 +157,7 @@ public class TipoUsuarioAdminService {
             .subtipos(subtiposActivos)
             .cantidadUsuarios(cantidadUsuarios)
             .fechaAlta(fechaFormateada)
-            .estado(tipoUsuario.getDeletedAt() == null ? "ACTIVO" : "DE_BAJA")
+            .estado(tipoUsuario.getDeletedAt() == null ? "Activo" : "De baja")
             .build();
     }
 

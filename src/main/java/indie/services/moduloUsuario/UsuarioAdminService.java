@@ -135,7 +135,7 @@ public class UsuarioAdminService {
     }
 
     private String estadoDesdeEntidad(Usuario usuario) {
-        return usuario.getDeletedAt() == null ? "ACTIVO" : "DE_BAJA";
+        return usuario.getDeletedAt() == null ? "Activo" : "De baja";
     }
 
     private LocalDateTime resolveDeletedAtFromEstado(String estado) {
