@@ -3,12 +3,18 @@ package indie.controllers;
 import indie.dtos.auth.EmailRequest;
 import indie.dtos.auth.MessageResponse;
 import indie.dtos.auth.ResetPasswordRequest;
+import indie.dtos.auth.SubTipoUsuarioDTO;
 import indie.dtos.auth.TokenValidationResponse;
+import indie.dtos.auth.RegistroUsuarioRequest;
 import indie.exceptions.EmailYaRegistradoException;
 import indie.models.moduloUsuario.Usuario;
 import indie.services.EmailService;
 import indie.services.VerificationTokenService;
+import indie.services.moduloUsuario.SubTipoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,12 +30,15 @@ public class AuthController {
     private VerificationTokenService verificationTokenService;
 
     @Autowired
+    private SubTipoUsuarioService subTipoUsuarioService;
+
+    @Autowired
     private EmailService emailService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registrar(@RequestBody Usuario usuario) {
+    public ResponseEntity<?> registrar(@RequestBody RegistroUsuarioRequest request) {
         try {
-            Usuario usuarioRegistrado = usuarioService.registrar(usuario);
+            Usuario usuarioRegistrado = usuarioService.registrar(request);
             return ResponseEntity.ok(usuarioRegistrado);
         } catch (EmailYaRegistradoException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -37,7 +46,7 @@ public class AuthController {
     }
 
     @GetMapping("/verify")
-    public ResponseEntity<String> verificarCuenta(@RequestParam String token) {
+    public ResponseEntity<String> verificarCuenta(@RequestParam("token") String token) {
         String resultado = verificationTokenService.verificarCuenta(token);
         return ResponseEntity.ok(resultado);
     }
@@ -66,6 +75,11 @@ public class AuthController {
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(new MessageResponse(e.getMessage()));
         }
+    }
+
+    @GetMapping("/sub-tipo-todos")
+    public List<SubTipoUsuarioDTO> getAllSubTipos() {
+        return subTipoUsuarioService.findAllSubTipo();
     }
 
 }
