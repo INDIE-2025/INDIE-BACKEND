@@ -1,6 +1,7 @@
 package indie.controllers.moduloUsuario;
 
 import indie.controllers.BaseController;
+import indie.dtos.auth.ChangePasswordRequest;
 import indie.models.moduloUsuario.Usuario;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.security.JwtUtils;
@@ -91,7 +92,7 @@ public class UsuarioController extends BaseController<Usuario, String> {
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error interno del servidor"));
         }
-    }   
+    }
 
     @GetMapping("/me")
     public ResponseEntity<?> me(@AuthenticationPrincipal String email) {
@@ -104,7 +105,33 @@ public class UsuarioController extends BaseController<Usuario, String> {
         }
     }
 
+    @PutMapping("/update-me")
+    public ResponseEntity<?> updateMe(@AuthenticationPrincipal String email, @RequestBody Usuario usuario) {
+        var opt = usuarioService.buscarPorEmail(email);
+        if (opt.isPresent()) {
+            Usuario usuarioExistente = opt.get();
+            if (usuario.getNombreUsuario() != null) {
+                usuarioExistente.setNombreUsuario(usuario.getNombreUsuario());
+            }
 
+            Usuario usuarioActualizado = usuarioService.save(usuarioExistente);
+            return ResponseEntity.ok(usuarioActualizado);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", "Usuario no encontrado"));
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest request) {
+        try {
+            String mensaje = usuarioService.cambiarPassword(
+                    request.getEmail(),
+                    request.getCurrentPassword(),
+                    request.getNewPassword());
+            return ResponseEntity.ok(mensaje);
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+    }
 }
-
-

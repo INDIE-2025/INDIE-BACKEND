@@ -37,7 +37,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
-        // DESHABILITAR SEGURIDAD PARA PRUEBAS
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
@@ -49,9 +48,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/reset-password").permitAll() // Solo verificacion de email público
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
+                        .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
                         .requestMatchers("/error").permitAll() // Permitir acceso a la página de error
                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
-                       .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilter(new JwtAuthenticationFilter(authManager, jwtUtils, usuarioService))

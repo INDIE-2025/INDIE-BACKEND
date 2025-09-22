@@ -11,3 +11,4 @@ public class UsuarioDTO {
     private String username;
     private SubTipoUsuarioDTO subTipoUsuario;
 }
+

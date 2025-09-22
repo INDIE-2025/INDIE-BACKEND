@@ -1,7 +1,6 @@
 package indie.services.moduloUsuario;
 
 import indie.models.moduloUsuario.TipoUsuario;
-import indie.repositories.moduloUsuario.SubTipoUsuarioRepository;
 import indie.repositories.moduloUsuario.TipoUsuarioRepository;
 import indie.services.BaseServiceImpl;
 import org.springframework.stereotype.Service;
