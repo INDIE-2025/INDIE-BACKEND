@@ -192,6 +192,12 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
         return seguimientoUsuarioRepository.isUsuarioBloqueado(seguidorId, seguidoId);
     }
 
+
+    @Transactional(readOnly = true)
+    public boolean verificarSiEstaSiendoBloqueado(String usuarioActualId, String otroUsuarioId) {
+        return seguimientoUsuarioRepository.isUsuarioBloqueado(otroUsuarioId, usuarioActualId);
+    }
+
     @Transactional(readOnly = true)
     public EstadisticasSeguimientoDTO obtenerEstadisticas(String usuarioId) {
         Usuario usuario = usuarioRepository.findById(usuarioId)

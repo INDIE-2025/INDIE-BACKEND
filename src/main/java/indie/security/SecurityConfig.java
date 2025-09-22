@@ -42,6 +42,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll() // Solo login público
                         .requestMatchers("/api/auth/register").permitAll() // Solo register público
+                        .requestMatchers("/api/auth/sub-tipo-todos").permitAll() // Solo consulta de subtipos públicos
                         .requestMatchers("/api/auth/verify").permitAll() // Solo verificacion de email público
                         .requestMatchers("/api/auth/request-password-reset").permitAll()
                         .requestMatchers("/api/auth/validate-reset-token").permitAll() // Solo verificacion de email público
