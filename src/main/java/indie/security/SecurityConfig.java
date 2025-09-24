@@ -3,6 +3,7 @@ package indie.security;
 import indie.models.moduloUsuario.Usuario;
 import indie.services.moduloUsuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -23,6 +24,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -34,6 +37,9 @@ public class SecurityConfig {
 
     @Autowired
     private JwtUtils jwtUtils;
+
+    @Value("${app.cors.allowed-origins:http://localhost:4200,http://localhost:3000}")
+    private String corsAllowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
@@ -114,11 +120,14 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Especificar orígenes exactos
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200",  // Tu frontend Angular
-                "http://localhost:3000"   // Por si usas otro puerto
-        ));
+        // Leer orígenes permitidos desde propiedades/entorno (coma-separados)
+        List<String> allowedOrigins = Arrays.stream(corsAllowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+
+        // Usar patrones para aceptar orígenes exactos o con comodines
+        configuration.setAllowedOriginPatterns(allowedOrigins);
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
