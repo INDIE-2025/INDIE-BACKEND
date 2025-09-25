@@ -120,6 +120,7 @@ public class SecurityConfig {
                 .map(String::trim)
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
+        allowedOrigins.add("https://indie-frontend.vercel.app");
 
         // Usar patrones para aceptar orígenes exactos o con comodines
         configuration.setAllowedOriginPatterns(allowedOrigins);
