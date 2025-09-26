@@ -124,6 +124,7 @@ public class SecurityConfig {
         allowedOrigins.add("https://indie-frontend.vercel.app");
         allowedOrigins.add("http://localhost:4200");
 
+
         // Usar patrones para aceptar orígenes exactos o con comodines
         configuration.setAllowedOriginPatterns(allowedOrigins);
 
