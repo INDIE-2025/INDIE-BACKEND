@@ -2,7 +2,6 @@ package indie.controllers.moduloNotificaciones;
 
 import indie.controllers.BaseController;
 import indie.models.moduloNotificaciones.TipoNotificacion;
-import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import indie.services.moduloNotificaciones.TipoNotificacionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;

@@ -28,7 +28,7 @@ public class EmailService {
     @Value("${app.verification.url}")
     private String verificationUrl;
 
-    @Value("http://localhost:4200/new-password?token=")
+    @Value("${app.resetPassword.url}")
     private String resetPasswordUrl;
 
     public void enviarEmailVerificacion(String toEmail, String token) {

@@ -2,8 +2,6 @@ package indie.services;
 
 import java.util.List;
 
-import indie.dtos.moduloBackup.OperacionBDCreateDto;
-import indie.models.moduloBackUp.OperacionBD;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.data.jpa.repository.JpaRepository;
 

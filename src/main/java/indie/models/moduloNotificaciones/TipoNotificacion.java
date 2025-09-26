@@ -2,8 +2,6 @@ package indie.models.moduloNotificaciones;
 
 import indie.models.BaseModel;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -2,12 +2,13 @@ package indie;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import io.github.cdimascio.dotenv.DotenvEntry;
-
-import java.util.Map;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import indie.config.AppProperties;
 
 @SpringBootApplication
+@EnableConfigurationProperties(AppProperties.class)
 public class ProyectoFinalApplication {
     static {
         // Cargar variables del archivo .env y mapear a nombres de propiedades de Spring

@@ -27,5 +27,6 @@ public class TipoMetrica extends BaseModel {
     private String unidadMedida;
     
     @NotNull
+    @Builder.Default
     private Boolean activo = true;
 }
