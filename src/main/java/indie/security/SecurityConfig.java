@@ -16,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -38,7 +37,7 @@ public class SecurityConfig {
     @Autowired
     private JwtUtils jwtUtils;
 
-    @Value("${app.cors.allowed-origins:http://localhost:4200,http://localhost:3000}")
+    @Value("${app.cors.allowed-origins}")
     private String corsAllowedOrigins;
 
     @Bean
@@ -50,6 +49,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
                         .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
+                        .requestMatchers("/api/chat/**").authenticated() // Endpoints privados
+                        .requestMatchers("/ws/**").permitAll() // Handshake WebSocket
                         .requestMatchers("/actuator/health").permitAll() // Permitir acceso al endpoint de health
                         .requestMatchers("/error").permitAll() // Permitir acceso a la página de error
                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
@@ -121,6 +122,7 @@ public class SecurityConfig {
                 .filter(s -> !s.isEmpty())
                 .collect(Collectors.toList());
         allowedOrigins.add("https://indie-frontend.vercel.app");
+        allowedOrigins.add("http://localhost:4200");
 
         // Usar patrones para aceptar orígenes exactos o con comodines
         configuration.setAllowedOriginPatterns(allowedOrigins);
@@ -135,10 +137,7 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    // PasswordEncoder bean moved to separate config to avoid circular deps
 }
 
 
