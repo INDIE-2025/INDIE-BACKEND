@@ -6,7 +6,6 @@ import indie.models.moduloComentarios.ComentarUsuario;
 import indie.services.moduloComentarios.ComentarioServiceImpl;
 import indie.services.moduloUsuario.UsuarioService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,7 +19,6 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
     private final ComentarioServiceImpl comentarioService;
     private final UsuarioService usuarioService;
 
-    @Autowired
     public ComentarioController(ComentarioServiceImpl comentarioService, UsuarioService usuarioService){
         super(comentarioService);
         this.comentarioService = comentarioService;

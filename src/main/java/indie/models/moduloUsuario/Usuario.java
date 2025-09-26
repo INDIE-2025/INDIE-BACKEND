@@ -51,6 +51,7 @@ public class Usuario extends BaseModel {
 
     @OneToMany(mappedBy = "idUsuario", cascade = CascadeType.ALL, orphanRemoval = false)
     @JsonIgnore // evita recursion infinita al serializar JSON
+    @Builder.Default
     private List<Evento> eventos = new ArrayList<>();
 
 }

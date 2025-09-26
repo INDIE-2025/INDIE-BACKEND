@@ -3,7 +3,6 @@ package indie.controllers.moduloUsuario;
 import indie.controllers.BaseController;
 import indie.dtos.auth.ChangePasswordRequest;
 import indie.models.moduloUsuario.Usuario;
-import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.security.JwtUtils;
 import indie.services.moduloUsuario.SeguimientoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
@@ -30,9 +29,6 @@ public class UsuarioController extends BaseController<Usuario, String> {
     private SeguimientoUsuarioService seguimientoUsuarioService;
     
     @Autowired
-    private UsuarioRepository usuarioRepository;
-    
-    @Autowired
     private JwtUtils jwtUtils;
 
     public UsuarioController(UsuarioService usuarioService) {
@@ -52,7 +48,7 @@ public class UsuarioController extends BaseController<Usuario, String> {
     }
 
     @GetMapping("/por-username")
-    public ResponseEntity<?> getPorUsername(@RequestParam String username,
+    public ResponseEntity<?> getPorUsername(@RequestParam("username") String username,
                                           @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             var opt = usuarioService.findByUsername(username);
