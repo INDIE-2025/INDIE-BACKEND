@@ -8,7 +8,6 @@ import indie.repositories.moduloComentarios.ComentarioRepository;
 import indie.repositories.moduloComentarios.DenunciaRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
     DenunciaRepository denunciaRepository;
 
-    @Autowired
     public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository) {
         super(comentarioRepository);
         this.comentarioRepository = comentarioRepository;

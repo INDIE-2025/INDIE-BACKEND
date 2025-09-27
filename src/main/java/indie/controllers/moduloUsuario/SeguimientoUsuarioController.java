@@ -155,9 +155,30 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
 
     @GetMapping("/seguidores/{username}")
-    public ResponseEntity<?> traerSeguidores(@PathVariable String username) {
+    public ResponseEntity<?> traerSeguidores(@PathVariable String username,
+                                            @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);
+            
+            // Verificar si el usuario actual está siendo bloqueado
+            if (authHeader != null) {
+                String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
+                if (usuarioActualUsername != null) {
+                    String usuarioActualId = obtenerIdDesdeUsername(usuarioActualUsername);
+                    
+                    boolean estaSiendoBloqueado = seguimientoUsuarioService
+                            .verificarSiEstaSiendoBloqueado(usuarioActualId, usuarioId);
+                    
+                    if (estaSiendoBloqueado) {
+                        return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(Map.of(
+                                    "error", "No tienes permisos para ver esta información",
+                                    "bloqueado", true
+                                ));
+                    }
+                }
+            }
             
             List<Usuario> seguidores = seguimientoUsuarioService.traerSeguidores(usuarioId);
             long totalSeguidores = seguimientoUsuarioService.contarSeguidores(usuarioId);
@@ -177,9 +198,30 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
  
     @GetMapping("/seguidos/{username}")
-    public ResponseEntity<?> traerSeguidos(@PathVariable String username) {
+    public ResponseEntity<?> traerSeguidos(@PathVariable String username,
+                                          @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);
+            
+            // Verificar si el usuario actual está siendo bloqueado
+            if (authHeader != null) {
+                String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
+                if (usuarioActualUsername != null) {
+                    String usuarioActualId = obtenerIdDesdeUsername(usuarioActualUsername);
+                    
+                    boolean estaSiendoBloqueado = seguimientoUsuarioService
+                            .verificarSiEstaSiendoBloqueado(usuarioActualId, usuarioId);
+                    
+                    if (estaSiendoBloqueado) {
+                        return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(Map.of(
+                                    "error", "No tienes permisos para ver esta información",
+                                    "bloqueado", true
+                                ));
+                    }
+                }
+            }
             
             List<Usuario> seguidos = seguimientoUsuarioService.traerSeguidos(usuarioId);
             long totalSeguidos = seguimientoUsuarioService.contarSeguidos(usuarioId);
@@ -283,9 +325,30 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
     }
 
     @GetMapping("/estadisticas/{username}")
-    public ResponseEntity<?> obtenerEstadisticas(@PathVariable String username) {
+    public ResponseEntity<?> obtenerEstadisticas(@PathVariable String username,
+                                                @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);
+            
+            // Verificar si el usuario actual está siendo bloqueado
+            if (authHeader != null) {
+                String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
+                if (usuarioActualUsername != null) {
+                    String usuarioActualId = obtenerIdDesdeUsername(usuarioActualUsername);
+                    
+                    boolean estaSiendoBloqueado = seguimientoUsuarioService
+                            .verificarSiEstaSiendoBloqueado(usuarioActualId, usuarioId);
+                    
+                    if (estaSiendoBloqueado) {
+                        return ResponseEntity
+                                .status(HttpStatus.FORBIDDEN)
+                                .body(Map.of(
+                                    "error", "No tienes permisos para ver esta información",
+                                    "bloqueado", true
+                                ));
+                    }
+                }
+            }
             
             long totalSeguidores = seguimientoUsuarioService.contarSeguidores(usuarioId);
             long totalSeguidos = seguimientoUsuarioService.contarSeguidos(usuarioId);
