@@ -49,6 +49,18 @@ public class EventoController extends BaseController<Evento, String> {
             EventoResponse r = new EventoResponse();
             r.id = e.getId();
             r.titulo = e.getTituloEvento();
+            r.descripcion = e.getDescripcionEvento();
+            r.fechaHoraEvento = e.getFechaHoraEvento();
+            r.ubicacion = e.getUbicacionEvento();
+            r.idUsuario = e.getIdUsuario().getId();
+            r.createdAt = e.getFechaAltaEvento();
+            r.updatedAt = e.getFechaModificacionEvento();
+            
+            // Obtener los IDs de colaboradores
+            r.colaboradoresIds = e.getColaboraciones().stream()
+                .map(c -> c.getIdUsuario().getId())
+                .toList();
+                
             return r;
         }).toList();
         return ResponseEntity.ok(response);
@@ -69,6 +81,13 @@ public class EventoController extends BaseController<Evento, String> {
         r.descripcion = evento.getDescripcionEvento();
         r.fechaHoraEvento = evento.getFechaHoraEvento();
         r.ubicacion = evento.getUbicacionEvento();
+        r.idUsuario = evento.getIdUsuario().getId();
+        
+        // Obtener los IDs de colaboradores
+        r.colaboradoresIds = evento.getColaboraciones().stream()
+            .map(c -> c.getIdUsuario().getId())
+            .toList();
+            
         return ResponseEntity.ok(r);
     }
 
