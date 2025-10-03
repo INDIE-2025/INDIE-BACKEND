@@ -1,8 +1,9 @@
 package indie.controllers.moduloMensajeria;
 
 import indie.dtos.moduloMensajeria.SendMessageRequest;
-import indie.dtos.moduloMensajeria.TypingRequest;
-import indie.dtos.moduloMensajeria.TypingEvent;
+// Typing deshabilitado
+// import indie.dtos.moduloMensajeria.TypingRequest;
+// import indie.dtos.moduloMensajeria.TypingEvent;
 import indie.models.moduloMensajeria.Chat;
 import indie.models.moduloMensajeria.Mensaje;
 import indie.models.moduloUsuario.Usuario;
@@ -41,16 +42,17 @@ public class ChatWsController {
         messagingTemplate.convertAndSend("/topic/chat/" + chatId, saved);
     }
 
-    @MessageMapping("/chat/{chatId}/typing")
-    public void typing(@DestinationVariable String chatId, @Payload TypingRequest body, Principal principal) {
-        if (principal == null) return;
-        Usuario me = usuarioService.buscarPorEmail(principal.getName()).orElse(null);
-        if (me == null) return;
-        Chat chat = chatService.findById(chatId);
-        if (chat == null) return;
-        boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
-        if (!isParticipant) return;
-        boolean typing = body != null && body.isTyping();
-        messagingTemplate.convertAndSend("/topic/chat/" + chatId + "/typing", new TypingEvent(me.getId(), typing));
-    }
+    // Typing deshabilitado para ahorrar recursos
+    // @MessageMapping("/chat/{chatId}/typing")
+    // public void typing(@DestinationVariable String chatId, @Payload TypingRequest body, Principal principal) {
+    //     if (principal == null) return;
+    //     Usuario me = usuarioService.buscarPorEmail(principal.getName()).orElse(null);
+    //     if (me == null) return;
+    //     Chat chat = chatService.findById(chatId);
+    //     if (chat == null) return;
+    //     boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
+    //     if (!isParticipant) return;
+    //     boolean typing = body != null && body.isTyping();
+    //     messagingTemplate.convertAndSend("/topic/chat/" + chatId + "/typing", new TypingEvent(me.getId(), typing));
+    // }
 }

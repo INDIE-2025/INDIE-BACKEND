@@ -50,7 +50,7 @@ public class ChatController extends BaseController<Chat,String> {
     }
 
     @PostMapping("/with/{otherUserId}")
-    public ResponseEntity<Chat> createOrGetDirectChat(@PathVariable String otherUserId) {
+    public ResponseEntity<Chat> createOrGetDirectChat(@PathVariable("otherUserId") String otherUserId) {
         Usuario me = getCurrentUser();
         Usuario other = usuarioService.findById(otherUserId);
         Chat chat = chatService.getOrCreateDirectChat(me, other);
@@ -80,7 +80,7 @@ public class ChatController extends BaseController<Chat,String> {
     }
 
     @GetMapping("/{chatId}/messages")
-    public ResponseEntity<?> listMessages(@PathVariable String chatId,
+    public ResponseEntity<?> listMessages(@PathVariable("chatId") String chatId,
                                           @RequestParam(name = "page", defaultValue = "0") int page,
                                           @RequestParam(name = "size", defaultValue = "20") int size) {
         Usuario me = getCurrentUser();
@@ -88,13 +88,14 @@ public class ChatController extends BaseController<Chat,String> {
         // simple guard: ensure user is participant
         boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
         if (!isParticipant) return ResponseEntity.status(403).build();
-        Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
+        // Ordenar por createdAt DESC para traer los más nuevos primero
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Order.desc("createdAt"), Sort.Order.asc("id")));
         Page<Mensaje> mensajes = mensajeService.listarMensajes(chat, pageable);
         return ResponseEntity.ok(mensajes);
     }
 
     @PostMapping("/{chatId}/messages")
-    public ResponseEntity<Mensaje> sendMessage(@PathVariable String chatId, @org.springframework.web.bind.annotation.RequestBody SendMessageRequest body) {
+    public ResponseEntity<Mensaje> sendMessage(@PathVariable("chatId") String chatId, @org.springframework.web.bind.annotation.RequestBody SendMessageRequest body) {
         if (body == null || body.getMensaje() == null || body.getMensaje().isBlank()) {
             return ResponseEntity.badRequest().build();
         }
@@ -109,7 +110,7 @@ public class ChatController extends BaseController<Chat,String> {
     }
 
     @PostMapping("/{chatId}/read")
-    public ResponseEntity<Void> markAsRead(@PathVariable String chatId) {
+    public ResponseEntity<Void> markAsRead(@PathVariable("chatId") String chatId) {
         Usuario me = getCurrentUser();
         Chat chat = chatService.findById(chatId);
         boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
@@ -120,7 +121,7 @@ public class ChatController extends BaseController<Chat,String> {
     }
 
     @GetMapping("/{chatId}/participants")
-    public ResponseEntity<java.util.List<Usuario>> getParticipants(@PathVariable String chatId) {
+    public ResponseEntity<java.util.List<Usuario>> getParticipants(@PathVariable("chatId") String chatId) {
         Usuario me = getCurrentUser();
         Chat chat = chatService.findById(chatId);
         boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));

@@ -106,11 +106,14 @@ public class UsuarioController extends BaseController<Usuario, String> {
         var opt = usuarioService.buscarPorEmail(email);
         if (opt.isPresent()) {
             Usuario usuarioExistente = opt.get();
+            usuario.setUsername(usuarioExistente.getUsername()); // No permitir cambiar el username
+            usuario.setEmailUsuario(usuarioExistente.getEmailUsuario()); // No permitir cambiar el email
+            usuario.setPassword(usuarioExistente.getPassword()); // No permitir cambiar el password aquí
+
             if (usuario.getNombreUsuario() != null) {
                 usuarioExistente.setNombreUsuario(usuario.getNombreUsuario());
             }
-
-            Usuario usuarioActualizado = usuarioService.save(usuarioExistente);
+            Usuario usuarioActualizado = usuarioService.save(usuario);
             return ResponseEntity.ok(usuarioActualizado);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

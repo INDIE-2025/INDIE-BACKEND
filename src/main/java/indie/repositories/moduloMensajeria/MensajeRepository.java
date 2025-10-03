@@ -23,4 +23,6 @@ public interface MensajeRepository extends JpaRepository<Mensaje, String> {
     long countByIdChatAndCreatedAtAfterAndIdEmisorNot(Chat chat, LocalDateTime after, indie.models.moduloUsuario.Usuario usuario);
 
     Page<Mensaje> findByIdChat(Chat chat, Pageable pageable);
+
+    Page<Mensaje> findByIdChatOrderByCreatedAtDesc(Chat chat, Pageable pageable);
 }
