@@ -26,7 +26,7 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
     }
 
     @GetMapping("/traercomentarios")
-    public ResponseEntity<?> traerComentariosDeUnUsuario(@RequestParam String idUsuarioComentado) {
+    public ResponseEntity<?> traerComentariosDeUnUsuario(@RequestParam("idUsuarioComentado") String idUsuarioComentado) {
         try {
             return ResponseEntity.ok(comentarioService.traerComentariosDeUnUsuario(idUsuarioComentado));
         } catch (Exception e) {
@@ -38,8 +38,8 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
     
     @PostMapping("/realizarComentario")
     public ResponseEntity<?> realizarComentario(
-            @RequestParam String comentario,
-            @RequestParam String idUsuarioComentado,
+            @RequestParam("comentario") String comentario,
+            @RequestParam("idUsuarioComentado") String idUsuarioComentado,
             @AuthenticationPrincipal String email
     ) {
         try {
@@ -60,7 +60,7 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
    
     @DeleteMapping("/eliminar")
     public ResponseEntity<?> eliminarComentario(
-            @RequestParam String idComentario,
+            @RequestParam("idComentario") String idComentario,
             @AuthenticationPrincipal String email
     ) {
         try {
@@ -79,8 +79,8 @@ public class ComentarioController extends BaseController<ComentarUsuario,String>
   
     @PostMapping("/denunciar")
     public ResponseEntity<?> denunciarComentario(
-            @RequestParam String idComentario,
-            @RequestParam String motivoDenuncia,
+            @RequestParam("idComentario") String idComentario,
+            @RequestParam("motivoDenuncia") String motivoDenuncia,
             @AuthenticationPrincipal String email
     ) {
         try {
