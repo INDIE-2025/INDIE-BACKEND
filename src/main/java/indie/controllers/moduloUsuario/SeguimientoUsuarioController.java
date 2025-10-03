@@ -59,7 +59,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
  
     @PostMapping("/seguir/{username}")
-    public ResponseEntity<?> seguirUsuario(@PathVariable String username, 
+    public ResponseEntity<?> seguirUsuario(@PathVariable("username") String username, 
                                          @RequestHeader("Authorization") String authHeader) {
         try {
             String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
@@ -85,7 +85,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
    
     @DeleteMapping("/dejarDeSeguir/{username}")
-    public ResponseEntity<?> dejarDeSeguirUsuario(@PathVariable String username, 
+    public ResponseEntity<?> dejarDeSeguirUsuario(@PathVariable("username") String username, 
                                                 @RequestHeader("Authorization") String authHeader) {
         try {
             String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
@@ -109,7 +109,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
      * Bloquear a un usuario
      */
     @PostMapping("/bloquear/{username}")
-    public ResponseEntity<?> bloquearUsuario(@PathVariable String username, 
+    public ResponseEntity<?> bloquearUsuario(@PathVariable("username") String username, 
                                            @RequestHeader("Authorization") String authHeader) {
         try {
             String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
@@ -135,7 +135,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
   
     @DeleteMapping("/desbloquear/{username}")
-    public ResponseEntity<?> desbloquearUsuario(@PathVariable String username, 
+    public ResponseEntity<?> desbloquearUsuario(@PathVariable("username") String username, 
                                               @RequestHeader("Authorization") String authHeader) {
         try {
             String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
@@ -155,7 +155,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
 
     @GetMapping("/seguidores/{username}")
-    public ResponseEntity<?> traerSeguidores(@PathVariable String username,
+    public ResponseEntity<?> traerSeguidores(@PathVariable("username") String username,
                                             @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);
@@ -198,7 +198,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
  
     @GetMapping("/seguidos/{username}")
-    public ResponseEntity<?> traerSeguidos(@PathVariable String username,
+    public ResponseEntity<?> traerSeguidos(@PathVariable("username") String username,
                                           @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);
@@ -303,7 +303,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
 
    
     @GetMapping("/verificar-seguimiento/{username}")
-    public ResponseEntity<?> verificarSeguimiento(@PathVariable String username, 
+    public ResponseEntity<?> verificarSeguimiento(@PathVariable("username") String username, 
                                                 @RequestHeader("Authorization") String authHeader) {
         try {
             String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
@@ -325,7 +325,7 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
     }
 
     @GetMapping("/estadisticas/{username}")
-    public ResponseEntity<?> obtenerEstadisticas(@PathVariable String username,
+    public ResponseEntity<?> obtenerEstadisticas(@PathVariable("username") String username,
                                                 @RequestHeader(value = "Authorization", required = false) String authHeader) {
         try {
             String usuarioId = obtenerIdDesdeUsername(username);

@@ -51,6 +51,7 @@ public class MensajeServiceImpl implements MensajeService {
 
     @Override
     public Page<Mensaje> listarMensajes(Chat chat, Pageable pageable) {
+        // Respetar el sort provisto por el Pageable (DESC desde el controlador)
         return mensajeRepository.findByIdChat(chat, pageable);
     }
 }
