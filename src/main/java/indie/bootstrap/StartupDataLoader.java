@@ -58,9 +58,9 @@ public class StartupDataLoader implements ApplicationRunner {
         new ConfiguracionSeed("Notificaciones - Denuncia rechazada - notificarPorMail", true, null),
         new ConfiguracionSeed("Notificaciones - Mensaje nuevo - genera", true, null),
         new ConfiguracionSeed("Notificaciones - Mensaje nuevo - notificarPorMail", false, null),
-        new ConfiguracionSeed("Recomendaciones - Subtipo de usuario", true, null),
-        new ConfiguracionSeed("Recomendaciones - Eventos cercanos", false, null),
-        new ConfiguracionSeed("Recomendaciones - Seguidores o interesados", true, null),
+        new ConfiguracionSeed("Recomendaciones - Filtro - Subtipo de usuario", true, null),
+        new ConfiguracionSeed("Recomendaciones - Orden - Eventos cercanos", false, null),
+        new ConfiguracionSeed("Recomendaciones - Orden - Seguidores o interesados", true, null),
         new ConfiguracionSeed("Reportes - Reportes de usuario - Visualizaciones del perfil", true, null),
         new ConfiguracionSeed("Reportes - Reportes de usuario - Usuarios interesados", true, null),
         new ConfiguracionSeed("Reportes - Reportes de usuario - Eventos mas populares", true, null),
@@ -160,10 +160,10 @@ public class StartupDataLoader implements ApplicationRunner {
     private Map<String, Permiso> seedPermisos() {
         Map<String, Permiso> resultado = new HashMap<>();
         PERMISOS.values().forEach(lista -> lista.forEach(seed -> {
-            Permiso permiso = permisoRepository.findByNombreConfiguracionIgnoreCase(seed.nombre())
+            Permiso permiso = permisoRepository.findByNombrePermisoIgnoreCase(seed.nombre())
                 .orElseGet(() -> {
                     Permiso nuevo = new Permiso();
-                    nuevo.setNombreConfiguracion(seed.nombre());
+                    nuevo.setNombrePermiso(seed.nombre());
                     return nuevo;
                 });
             permisoRepository.save(permiso);

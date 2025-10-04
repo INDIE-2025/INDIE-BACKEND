@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PermisoRepository extends JpaRepository<Permiso, String> {
 
-    Optional<Permiso> findByNombreConfiguracionIgnoreCase(String nombreConfiguracion);
+    Optional<Permiso> findByNombrePermisoIgnoreCase(String nombrepermiso);
 
-    List<Permiso> findAllByOrderByNombreConfiguracionAsc();
+    List<Permiso> findAllByOrderByNombrePermisoAsc();
 }

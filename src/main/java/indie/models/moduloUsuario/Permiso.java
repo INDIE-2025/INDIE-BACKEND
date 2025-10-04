@@ -18,6 +18,6 @@ import lombok.Setter;
 public class Permiso extends BaseModel {
 
     @NotNull
-    private String nombreConfiguracion;
+    private String nombrePermiso;
 
 }

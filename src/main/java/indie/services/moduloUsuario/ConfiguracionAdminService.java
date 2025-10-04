@@ -45,7 +45,7 @@ public class ConfiguracionAdminService {
 
         ConfiguracionAdminRequestDTO.PermisosWrapper permisosWrapper = new ConfiguracionAdminRequestDTO.PermisosWrapper();
         List<ConfiguracionAdminRequestDTO.PermisoPorUsuarioDTO> usuarios = new ArrayList<>();
-        List<Permiso> permisos = permisoRepository.findAllByOrderByNombreConfiguracionAsc();
+        List<Permiso> permisos = permisoRepository.findAllByOrderByNombrePermisoAsc();
 
         for (TipoUsuario tipoUsuario : tipoUsuarioRepository.findAllByDeletedAtIsNull()) {
             if (esAdministrador(tipoUsuario)) {
@@ -65,7 +65,7 @@ public class ConfiguracionAdminService {
             List<ConfiguracionAdminRequestDTO.PermisoEstadoDTO> permisosDTO = new ArrayList<>();
             for (Permiso permiso : permisos) {
                 ConfiguracionAdminRequestDTO.PermisoEstadoDTO permisoEstadoDTO = new ConfiguracionAdminRequestDTO.PermisoEstadoDTO();
-                permisoEstadoDTO.setNombre(permiso.getNombreConfiguracion());
+                permisoEstadoDTO.setNombre(permiso.getNombrePermiso());
                 PermisoTipoUsuario permisoTipoUsuario = permisosAsignados.get(permiso.getId());
                 permisoEstadoDTO.setActivo(permisoTipoUsuario != null && permisoTipoUsuario.isActivo());
                 permisosDTO.add(permisoEstadoDTO);
@@ -124,7 +124,7 @@ public class ConfiguracionAdminService {
 
             for (ConfiguracionAdminRequestDTO.PermisoEstadoDTO permisoDTO : usuarioDTO.getPermisos()) {
                 String nombrePermiso = permisoDTO.getNombre().trim();
-                Permiso permiso = permisoRepository.findByNombreConfiguracionIgnoreCase(nombrePermiso)
+                Permiso permiso = permisoRepository.findByNombrePermisoIgnoreCase(nombrePermiso)
                     .orElseThrow(() -> new EntityNotFoundException("Permiso no encontrado: " + nombrePermiso));
 
                 PermisoTipoUsuario permisoTipoUsuario = permisoTipoUsuarioRepository
