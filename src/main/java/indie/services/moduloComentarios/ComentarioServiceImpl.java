@@ -80,10 +80,16 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
         if (!comentario.getIdUsuarioComentador().getId().equals(idUsuario)) {
             throw new Exception("No tienes permisos para eliminar este comentario");
         }
-        comentario.setDeletedAt(LocalDateTime.now());
+        LocalDateTime fechaBaja = LocalDateTime.now();
+        comentario.setDeletedAt(fechaBaja);
         comentarioRepository.save(comentario);
-    }
 
+        List<Denuncia> denunciasActivas = denunciaRepository.findByIdComentarioIdAndDeletedAtIsNull(idComentario);
+        if (!denunciasActivas.isEmpty()) {
+            denunciasActivas.forEach(denuncia -> denuncia.setDeletedAt(fechaBaja));
+            denunciaRepository.saveAll(denunciasActivas);
+        }
+    }
 
     @Override
     public void denunciarComentario(String idComentario, String idUsuario, String motivoDenuncia) throws Exception {
@@ -107,3 +113,5 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
 
 }
+
+
