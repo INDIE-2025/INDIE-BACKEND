@@ -15,11 +15,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Funcionalidad extends BaseModel {
+public class Permiso extends BaseModel {
 
     @NotNull
-    private String nombreFuncionalidad;
-    @NotNull
-    private String descripcionFuncionalidad;
+    private String nombrePermiso;
 
 }
