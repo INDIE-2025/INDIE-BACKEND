@@ -62,7 +62,7 @@ public class AuthController {
     }
 
     @GetMapping("/validate-reset-token")
-    public ResponseEntity<?> validateResetToken(@RequestParam String token) {
+    public ResponseEntity<?> validateResetToken(@RequestParam("token") String token) {
         boolean valid = verificationTokenService.validarTokenRecuperacion(token);
         return ResponseEntity.ok(new TokenValidationResponse(valid));
     }

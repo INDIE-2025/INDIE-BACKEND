@@ -28,7 +28,7 @@ public class TipoUsuarioAdminController {
     }
 
     @GetMapping("/{nombreTipoUsuario:.+}")
-    public ResponseEntity<TipoUsuarioAdminResponseDTO> obtenerTipoUsuario(@PathVariable String nombreTipoUsuario) {
+    public ResponseEntity<TipoUsuarioAdminResponseDTO> obtenerTipoUsuario(@PathVariable("nombreTipoUsuario") String nombreTipoUsuario) {
         return ResponseEntity.ok(tipoUsuarioAdminService.obtenerPorNombre(nombreTipoUsuario));
     }
 
@@ -38,7 +38,7 @@ public class TipoUsuarioAdminController {
     }
 
     @PutMapping("/{nombreTipoUsuario:.+}")
-    public ResponseEntity<TipoUsuarioAdminResponseDTO> actualizarTipoUsuario(@PathVariable String nombreTipoUsuario,
+    public ResponseEntity<TipoUsuarioAdminResponseDTO> actualizarTipoUsuario(@PathVariable("nombreTipoUsuario") String nombreTipoUsuario,
                                                                              @Valid @RequestBody TipoUsuarioAdminRequestDTO dto) {
         return ResponseEntity.ok(tipoUsuarioAdminService.actualizar(nombreTipoUsuario, dto));
     }

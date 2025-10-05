@@ -2,8 +2,12 @@ package indie.services.moduloUsuario;
 
 import indie.dtos.moduloUsuario.admin.TipoUsuarioAdminRequestDTO;
 import indie.dtos.moduloUsuario.admin.TipoUsuarioAdminResponseDTO;
+import indie.models.moduloUsuario.Permiso;
+import indie.models.moduloUsuario.PermisoTipoUsuario;
 import indie.models.moduloUsuario.SubTipoUsuario;
 import indie.models.moduloUsuario.TipoUsuario;
+import indie.repositories.moduloUsuario.PermisoRepository;
+import indie.repositories.moduloUsuario.PermisoTipoUsuarioRepository;
 import indie.repositories.moduloUsuario.SubTipoUsuarioRepository;
 import indie.repositories.moduloUsuario.TipoUsuarioRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
@@ -30,6 +34,8 @@ public class TipoUsuarioAdminService {
     private final TipoUsuarioRepository tipoUsuarioRepository;
     private final SubTipoUsuarioRepository subTipoUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final PermisoRepository permisoRepository;
+    private final PermisoTipoUsuarioRepository permisoTipoUsuarioRepository;
 
     public List<TipoUsuarioAdminResponseDTO> obtenerTodos() {
         return tipoUsuarioRepository.findAll().stream()
@@ -65,6 +71,8 @@ public class TipoUsuarioAdminService {
             subTipos.add(subTipo);
         }
         subTipoUsuarioRepository.saveAll(subTipos);
+
+        crearPermisosIniciales(guardado);
         return toResponse(guardado);
     }
 
@@ -86,6 +94,23 @@ public class TipoUsuarioAdminService {
 
         actualizarSubtipos(actualizado, dto);
         return toResponse(actualizado);
+    }
+
+    private void crearPermisosIniciales(TipoUsuario tipoUsuario) {
+        List<Permiso> permisos = permisoRepository.findAll();
+        if (permisos.isEmpty()) {
+            return;
+        }
+        List<PermisoTipoUsuario> permisosTipoUsuario = permisos.stream()
+            .map(permiso -> {
+                PermisoTipoUsuario nuevo = new PermisoTipoUsuario();
+                nuevo.setPermiso(permiso);
+                nuevo.setTipoUsuario(tipoUsuario);
+                nuevo.setActivo(false);
+                return nuevo;
+            })
+            .collect(Collectors.toList());
+        permisoTipoUsuarioRepository.saveAll(permisosTipoUsuario);
     }
 
     private void actualizarSubtipos(TipoUsuario tipoUsuario, TipoUsuarioAdminRequestDTO dto) {
@@ -172,4 +197,3 @@ public class TipoUsuarioAdminService {
         return null;
     }
 }
-
