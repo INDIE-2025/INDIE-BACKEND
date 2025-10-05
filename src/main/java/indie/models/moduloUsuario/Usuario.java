@@ -45,6 +45,15 @@ public class Usuario extends BaseModel {
     @ManyToOne(cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH}, optional = true)
     private SubTipoUsuario subTipoUsuario;
 
+    // Foto de perfil almacenada como BLOB en la base de datos
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private byte[] fotoPerfil;
+
+    // Tipo de contenido de la foto (image/png, image/jpeg, etc.)
+    private String fotoPerfilContentType;
+
     public boolean isVerificado() {
         return fechaVerificacion != null;
     }
