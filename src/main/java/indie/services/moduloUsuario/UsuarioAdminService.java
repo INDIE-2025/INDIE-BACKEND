@@ -4,6 +4,7 @@ package indie.services.moduloUsuario;
 import indie.dtos.moduloUsuario.admin.UsuarioAdminCreateDTO;
 import indie.dtos.moduloUsuario.admin.UsuarioAdminResponseDTO;
 import indie.dtos.moduloUsuario.admin.UsuarioAdminUpdateDTO;
+import indie.models.moduloCalendario.Calendario;
 import indie.models.moduloUsuario.SubTipoUsuario;
 import indie.models.moduloUsuario.TipoUsuario;
 import indie.models.moduloUsuario.Usuario;
@@ -73,6 +74,10 @@ public class UsuarioAdminService {
         usuario.setDeletedAt(resolveDeletedAtFromEstado(dto.getEstado()));
         usuario.setSubTipoUsuario(subTipoUsuario);
         usuario.setFechaVerificacion(LocalDateTime.now());
+
+        Calendario calendario = new Calendario();
+        calendario.setZonaHoraria("America/Argentina/Buenos_Aires"); // Zona horaria por defecto
+        usuario.setCalendario(calendario);
 
         Usuario guardado = usuarioRepository.save(usuario);
         return toResponseDto(guardado, tipoUsuario);
