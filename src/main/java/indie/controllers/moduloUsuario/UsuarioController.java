@@ -6,6 +6,7 @@ import indie.models.moduloUsuario.Usuario;
 import indie.security.JwtUtils;
 import indie.services.moduloUsuario.SeguimientoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.util.Map;
 
