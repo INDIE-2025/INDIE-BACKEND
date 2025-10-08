@@ -8,7 +8,6 @@ import indie.repositories.moduloComentarios.ComentarioRepository;
 import indie.repositories.moduloComentarios.DenunciaRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,7 +23,6 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
     DenunciaRepository denunciaRepository;
 
-    @Autowired
     public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository) {
         super(comentarioRepository);
         this.comentarioRepository = comentarioRepository;
@@ -82,10 +80,16 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
         if (!comentario.getIdUsuarioComentador().getId().equals(idUsuario)) {
             throw new Exception("No tienes permisos para eliminar este comentario");
         }
-        comentario.setDeletedAt(LocalDateTime.now());
+        LocalDateTime fechaBaja = LocalDateTime.now();
+        comentario.setDeletedAt(fechaBaja);
         comentarioRepository.save(comentario);
-    }
 
+        List<Denuncia> denunciasActivas = denunciaRepository.findByIdComentarioIdAndDeletedAtIsNull(idComentario);
+        if (!denunciasActivas.isEmpty()) {
+            denunciasActivas.forEach(denuncia -> denuncia.setDeletedAt(fechaBaja));
+            denunciaRepository.saveAll(denunciasActivas);
+        }
+    }
 
     @Override
     public void denunciarComentario(String idComentario, String idUsuario, String motivoDenuncia) throws Exception {
@@ -109,3 +113,5 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
 
 }
+
+

@@ -3,6 +3,7 @@ package indie.security;
 import indie.models.moduloUsuario.Usuario;
 import indie.services.moduloUsuario.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -15,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,6 +23,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebSecurity
@@ -35,20 +37,21 @@ public class SecurityConfig {
     @Autowired
     private JwtUtils jwtUtils;
 
+    @Value("${app.cors.allowed-origins}")
+    private String corsAllowedOrigins;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authManager) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/login").permitAll() // Solo login público
-                        .requestMatchers("/api/auth/register").permitAll() // Solo register público
-                        .requestMatchers("/api/auth/verify").permitAll() // Solo verificacion de email público
-                        .requestMatchers("/api/auth/request-password-reset").permitAll()
-                        .requestMatchers("/api/auth/validate-reset-token").permitAll() // Solo verificacion de email público
-                        .requestMatchers("/api/auth/reset-password").permitAll() // Solo verificacion de email público
+                        .requestMatchers("/api/auth/**").permitAll() // Endpoints de autenticación
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
                         .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
+                        .requestMatchers("/api/chat/**").authenticated() // Endpoints privados
+                        .requestMatchers("/ws/**").permitAll() // Handshake WebSocket
+                        .requestMatchers("/actuator/health").permitAll() // Permitir acceso al endpoint de health
                         .requestMatchers("/error").permitAll() // Permitir acceso a la página de error
                        .requestMatchers("/api/**").authenticated() // Resto requiere autenticación
                 )
@@ -113,11 +116,17 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Especificar orígenes exactos
-        configuration.setAllowedOrigins(List.of(
-                "http://localhost:4200",  // Tu frontend Angular
-                "http://localhost:3000"   // Por si usas otro puerto
-        ));
+        // Leer orígenes permitidos desde propiedades/entorno (coma-separados)
+        List<String> allowedOrigins = Arrays.stream(corsAllowedOrigins.split(","))
+                .map(String::trim)
+                .filter(s -> !s.isEmpty())
+                .collect(Collectors.toList());
+        allowedOrigins.add("https://indie-frontend.vercel.app");
+        allowedOrigins.add("http://localhost:4200");
+
+
+        // Usar patrones para aceptar orígenes exactos o con comodines
+        configuration.setAllowedOriginPatterns(allowedOrigins);
 
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
@@ -129,10 +138,7 @@ public class SecurityConfig {
         return source;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+    // PasswordEncoder bean moved to separate config to avoid circular deps
 }
 
 
