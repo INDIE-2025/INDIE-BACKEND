@@ -2,6 +2,7 @@ package indie.services.moduloUsuario;
 
 import indie.exceptions.EmailYaRegistradoException;
 import indie.dtos.auth.RegistroUsuarioRequest;
+import indie.models.moduloCalendario.Calendario;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
 import indie.services.EmailService;
@@ -12,6 +13,7 @@ import indie.models.moduloUsuario.SubTipoUsuario;
 import indie.models.moduloUsuario.Usuario;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -37,6 +39,7 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
         this.passwordEncoder = passwordEncoder;
     }
 
+    @Transactional
     public Usuario registrar(RegistroUsuarioRequest request) {
 
         if (request == null) {
@@ -62,6 +65,11 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
         usuario.setInstagramUsuario(request.getInstagramUsuario());
         // Encriptar la contrasena antes de guardar
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
+
+        // 🆕 CREAR CALENDARIO AUTOMÁTICAMENTE
+        Calendario calendario = new Calendario();
+        calendario.setZonaHoraria("America/Argentina/Buenos_Aires"); // Zona horaria por defecto
+        usuario.setCalendario(calendario);
 
         try {
             SubTipoUsuario subTipo = subTipoUsuarioService.findById(request.getSubTipoUsuarioId());
