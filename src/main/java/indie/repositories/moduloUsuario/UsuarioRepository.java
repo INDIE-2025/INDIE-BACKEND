@@ -4,6 +4,8 @@ import indie.models.moduloUsuario.Usuario;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,8 +31,8 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
      * @param username Parte del nombre de usuario a buscar
      * @return Lista de usuarios que coinciden con el criterio de búsqueda
      */
-    @org.springframework.data.jpa.repository.Query(value = "SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.subTipoUsuario WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%')) OR LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :username, '%')) OR LOWER(u.apellidoUsuario) LIKE LOWER(CONCAT('%', :username, '%'))) AND u.deletedAt IS NULL")
-    List<Usuario> findByUsernameContainingIgnoreCase(String username);
+    @Query(value = "SELECT DISTINCT u FROM Usuario u LEFT JOIN FETCH u.subTipoUsuario WHERE (LOWER(u.username) LIKE LOWER(CONCAT('%', :username, '%')) OR LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :username, '%')) OR LOWER(u.apellidoUsuario) LIKE LOWER(CONCAT('%', :username, '%'))) AND u.deletedAt IS NULL")
+    List<Usuario> findByUsernameContainingIgnoreCase(@Param("username") String username);
     
     /**
      * Método alternativo de búsqueda usando el método derivado de JPA
@@ -44,11 +46,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
      * @param searchTerm Término para buscar en cualquier campo de texto del usuario
      * @return Lista de usuarios que coinciden con el criterio de búsqueda
      */
-    @org.springframework.data.jpa.repository.Query(value = "SELECT u FROM Usuario u WHERE " +
+    @Query(value = "SELECT u FROM Usuario u WHERE " +
             "(LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.nombreUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.apellidoUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
             "LOWER(u.emailUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) AND " +
             "u.deletedAt IS NULL")
-    List<Usuario> findByAnyField(String searchTerm);
+    List<Usuario> findByAnyField(@Param("searchTerm") String searchTerm);
 }

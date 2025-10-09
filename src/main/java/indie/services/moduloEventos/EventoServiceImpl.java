@@ -105,6 +105,78 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
 
         return out;
     }
+    
+    @Transactional
+    public EventoResponse actualizar(String id, crearEventoDTO r){
+        // Validación del título
+        if (r.titulo == null || r.titulo.trim().isEmpty()) {
+            throw new IllegalArgumentException("El título no puede estar vacío");
+        }
+        
+        // Validación de la fecha
+        if (r.fechaHoraEvento == null) {
+            throw new IllegalArgumentException("La fecha y hora del evento son obligatorias");
+        }
+        
+        if (r.fechaHoraEvento.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("La fecha del evento no puede ser en el pasado");
+        }
+        
+        // Buscar el evento existente
+        Evento existente = eventoRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Evento no encontrado"));
+            
+        // Verificar que el usuario que actualiza sea el creador del evento
+        if (!existente.getIdUsuario().getId().equals(r.idUsuario)) {
+            throw new IllegalArgumentException("No tienes permiso para modificar este evento");
+        }
+        
+        // Verificar duplicados solo si cambia el título o la fecha
+        if (r.estadoEvento == null || r.estadoEvento.equals("PUBLICADO")) {
+            boolean tituloModificado = !existente.getTituloEvento().equals(r.titulo);
+            boolean fechaModificada = !existente.getFechaHoraEvento().equals(r.fechaHoraEvento);
+            
+            if ((tituloModificado || fechaModificada) && 
+                existeEventoConTituloYFecha(r.titulo, r.fechaHoraEvento) && 
+                !existente.getId().equals(id)) {
+                throw new indie.exceptions.EventoDuplicadoException("Ya existe un evento publicado con el mismo título y fecha");
+            }
+        }
+        
+        // Actualizar los datos del evento
+        existente.setTituloEvento(r.titulo);
+        existente.setDescripcionEvento(r.descripcion);
+        existente.setFechaHoraEvento(r.fechaHoraEvento);
+        existente.setFechaModificacionEvento(LocalDateTime.now());
+        existente.setUbicacionEvento(r.ubicacion);
+        
+        if (r.estadoEvento != null) {
+            existente.setEstadoEvento(indie.models.enums.eventoEstado.valueOf(r.estadoEvento));
+        }
+
+        Evento guardado = eventoRepository.save(existente);
+        
+        // Procesar colaboradores si están presentes
+        List<String> colaboradoresIds = new ArrayList<>();
+        if (r.colaboradores != null) {
+            System.out.println("Processing " + r.colaboradores.size() + " collaborators for event update: " + guardado.getId());
+            colaboradoresIds = r.colaboradores;
+            guardarColaboradores(guardado, colaboradoresIds);
+        }
+
+        EventoResponse out = new EventoResponse();
+        out.id = guardado.getId();
+        out.titulo = guardado.getTituloEvento();
+        out.descripcion = guardado.getDescripcionEvento();
+        out.fechaHoraEvento = guardado.getFechaHoraEvento();
+        out.ubicacion = guardado.getUbicacionEvento();
+        out.idUsuario = guardado.getIdUsuario().getId();
+        out.createdAt = guardado.getFechaAltaEvento();
+        out.updatedAt = guardado.getFechaModificacionEvento();
+        out.colaboradoresIds = colaboradoresIds; // Incluir los IDs de colaboradores en la respuesta
+
+        return out;
+    }
 
     @Transactional
     public EventoResponse guardarBorrador(crearEventoDTO r){
@@ -226,6 +298,35 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         return eventoRepository.findByEstadoEventoAndIdUsuario(indie.models.enums.eventoEstado.BORRADOR, userId);
     }
     
+    @Override
+    public List<Evento> obtenerPublicadosPorUsuario(String userId){
+        // Agregamos logs para depuración
+        System.out.println("=== BUSCANDO EVENTOS PUBLICADOS PARA USUARIO: " + userId + " ===");
+        
+        // Verificamos que exista el usuario
+        boolean usuarioExiste = usuarioRepository.existsById(userId);
+        System.out.println("¿Usuario existe? " + usuarioExiste);
+        
+        if (!usuarioExiste) {
+            System.out.println("ERROR: Usuario no encontrado");
+            throw new IllegalArgumentException("Usuario no encontrado");
+        }
+        
+        // Obtenemos los eventos
+        List<Evento> eventos = eventoRepository.findByEstadoEventoAndIdUsuario(indie.models.enums.eventoEstado.PUBLICADO, userId);
+        
+        // Imprimimos información sobre los eventos encontrados
+        System.out.println("Cantidad de eventos encontrados: " + eventos.size());
+        for (Evento evento : eventos) {
+            System.out.println("- Evento ID: " + evento.getId() + 
+                ", Título: " + evento.getTituloEvento() + 
+                ", Estado: " + evento.getEstadoEvento() +
+                ", Usuario: " + evento.getIdUsuario().getId());
+        }
+        
+        return eventos;
+    }
+    
     @Transactional
     public void marcarBorradorComoBaja(String titulo, String userId) {
         // Verificamos que exista el usuario
@@ -252,7 +353,19 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
 
     @Override
     public Evento findById(String id) {
-        return eventoRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Evento no encontrado"));
+        System.out.println("=== BUSCANDO EVENTO POR ID: " + id + " ===");
+        
+        // Intentamos encontrar el evento
+        Optional<Evento> eventoOpt = eventoRepository.findById(id);
+        
+        // Verificamos si se encontró
+        if (!eventoOpt.isPresent()) {
+            System.out.println("ERROR: Evento no encontrado con ID: " + id);
+            throw new IllegalArgumentException("Evento no encontrado");
+        }
+        
+        System.out.println("Evento encontrado: " + eventoOpt.get().getId() + ", Título: " + eventoOpt.get().getTituloEvento());
+        return eventoOpt.get();
     }
     
     /**
