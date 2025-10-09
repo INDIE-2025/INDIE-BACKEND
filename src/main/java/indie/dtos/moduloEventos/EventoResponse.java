@@ -1,6 +1,7 @@
 package indie.dtos.moduloEventos;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class EventoResponse {
   public String id;
@@ -11,4 +12,5 @@ public class EventoResponse {
   public String idUsuario;
   public LocalDateTime createdAt;
   public LocalDateTime updatedAt;
+  public List<String> colaboradoresIds; // Lista de IDs de colaboradores
 }
