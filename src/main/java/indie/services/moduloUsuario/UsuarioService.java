@@ -66,7 +66,7 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
         // Encriptar la contrasena antes de guardar
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
 
-        // 🆕 CREAR CALENDARIO AUTOMÁTICAMENTE
+        // CREAR CALENDARIO AUTOMÁTICAMENTE
         Calendario calendario = new Calendario();
         calendario.setZonaHoraria("America/Argentina/Buenos_Aires"); // Zona horaria por defecto
         usuario.setCalendario(calendario);
