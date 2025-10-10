@@ -7,6 +7,7 @@ import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
 import indie.services.EmailService;
 import indie.services.VerificationTokenService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import indie.models.moduloUsuario.SubTipoUsuario;
@@ -199,4 +200,21 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
             return new ArrayList<>();
         }
     }
+
+    public String obtenerTipoUsuarioPorId(String usuarioId) {
+        if (usuarioId == null || usuarioId.isBlank()) {
+            throw new IllegalArgumentException("El ID de usuario no puede estar vacio");
+        }
+
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario no encontrado con ID: " + usuarioId));
+
+        SubTipoUsuario subTipo = usuario.getSubTipoUsuario();
+        if (subTipo == null || subTipo.getTipoUsuario() == null) {
+            throw new EntityNotFoundException("El usuario no tiene un tipo asociado");
+        }
+
+        return subTipo.getTipoUsuario().getNombreTipoUsuario();
+    }
+
 }

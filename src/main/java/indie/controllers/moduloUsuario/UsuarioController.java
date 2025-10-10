@@ -7,6 +7,8 @@ import indie.security.JwtUtils;
 import indie.services.moduloUsuario.SeguimientoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import jakarta.persistence.EntityNotFoundException;
+
 
 import java.util.List;
 import java.util.Map;
@@ -244,6 +246,21 @@ public class UsuarioController extends BaseController<Usuario, String> {
         }
     }
     
+    /**
+     * Obtiene el tipo de usuario asociado al ID proporcionado.
+     */
+    @GetMapping("/{id}/tipo-usuario")
+    public ResponseEntity<?> obtenerTipoUsuarioPorId(@PathVariable("id") String id) {
+        try {
+            String tipoUsuario = usuarioService.obtenerTipoUsuarioPorId(id);
+            return ResponseEntity.ok(Map.of("tipoUsuario", tipoUsuario));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     /**
      * Endpoint para buscar usuarios por nombre de usuario parcial, ignorando mayúsculas/minúsculas
      * @param username Parte del nombre de usuario a buscar
