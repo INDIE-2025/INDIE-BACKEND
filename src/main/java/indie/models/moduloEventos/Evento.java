@@ -8,7 +8,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -17,10 +16,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
-@Getter
+@Getter // incluye @Getter, @Setter, @ToString, @EqualsAndHashCode
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
@@ -52,7 +49,6 @@ public class Evento extends BaseModel {
     @NotNull
     private eventoEstado estadoEvento;
 
-    @OneToMany(mappedBy = "idEvento", fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<Colaboracion> colaboraciones = new ArrayList<>();
+    //private List<Usuario> colaboradores;
+
 }

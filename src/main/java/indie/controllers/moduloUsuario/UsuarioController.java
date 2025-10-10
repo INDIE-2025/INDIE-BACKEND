@@ -8,7 +8,6 @@ import indie.services.moduloUsuario.SeguimientoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -223,73 +222,6 @@ public class UsuarioController extends BaseController<Usuario, String> {
             return ResponseEntity.ok(mensaje);
         } catch (IllegalArgumentException ex) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
-    }
-    
-    /**
-     * Sobrescribe el método getById del controlador base para manejar los errores adecuadamente
-     * @param id ID del usuario a buscar
-     * @return Usuario encontrado o error 404 si no existe
-     */
-    @Override
-    @GetMapping("/{id}")
-    public ResponseEntity<Usuario> getById(@PathVariable("id") String id) {
-        System.out.println("Buscando usuario con ID: " + id);
-        try {
-            Usuario usuario = usuarioService.findById(id);
-            return ResponseEntity.ok(usuario);
-        } catch (Exception e) {
-            System.out.println("Error al buscar usuario por ID: " + e.getMessage());
-            throw new RuntimeException("Usuario no encontrado con ID: " + id, e);
-        }
-    }
-    
-    /**
-     * Endpoint para buscar usuarios por nombre de usuario parcial, ignorando mayúsculas/minúsculas
-     * @param username Parte del nombre de usuario a buscar
-     * @return Lista de usuarios que coinciden con el criterio de búsqueda
-     */
-    @GetMapping("/buscar")
-    public ResponseEntity<?> buscarUsuarios(@RequestParam(name = "username") String username) {
-        System.out.println("-------------------------------------------------------");
-        System.out.println("Recibida búsqueda de usuarios con término: [" + username + "]");
-        
-        try {
-            if (username == null || username.trim().isEmpty()) {
-                System.out.println("Término de búsqueda vacío o nulo");
-                return ResponseEntity.badRequest().body(Map.of("error", "El término de búsqueda no puede estar vacío"));
-            }
-            
-            // Eliminar espacios extra
-            String termino = username.trim();
-            System.out.println("Término de búsqueda limpio: [" + termino + "]");
-            
-            List<Usuario> usuarios = usuarioService.buscarPorUsernameParcial(termino);
-            System.out.println("Resultado final - Usuarios encontrados: " + usuarios.size());
-            
-            if (usuarios.isEmpty()) {
-                System.out.println("No se encontraron usuarios para mostrar");
-                // Retornar una lista vacía directamente
-                return ResponseEntity.ok(usuarios);
-            }
-            
-            // Imprimir los primeros 5 usuarios encontrados para debug
-            for (int i = 0; i < Math.min(usuarios.size(), 5); i++) {
-                Usuario u = usuarios.get(i);
-                System.out.println("  - Usuario: " + u.getUsername() + ", ID: " + u.getId() + 
-                                   ", Nombre: " + u.getNombreUsuario() + " " + u.getApellidoUsuario());
-            }
-            System.out.println("-------------------------------------------------------");
-            
-            return ResponseEntity.ok(usuarios);
-        } catch (IllegalArgumentException ex) {
-            System.out.println("Error de validación: " + ex.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", ex.getMessage()));
-        } catch (Exception ex) {
-            System.out.println("Error interno: " + ex.getMessage());
-            ex.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al buscar usuarios: " + ex.getMessage()));
         }
     }
 }

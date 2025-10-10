@@ -21,11 +21,6 @@ public class GlobalExceptionHandler {
     
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException ex, WebRequest request) {
-        System.out.println("=== ERROR HANDLER: IllegalArgumentException capturada ===");
-        System.out.println("Mensaje: " + ex.getMessage());
-        System.out.println("URI: " + request.getDescription(false));
-        ex.printStackTrace(); // Imprimir stack trace completo para depuración
-        
         ErrorResponse errorResponse = new ErrorResponse(
                 HttpStatus.BAD_REQUEST.value(),
                 ex.getMessage(),

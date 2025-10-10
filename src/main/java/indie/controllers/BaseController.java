@@ -20,7 +20,7 @@ public abstract class BaseController<T, ID> {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<T> getById(@PathVariable(name = "id") ID id) {
+    public ResponseEntity<T> getById(@PathVariable ID id) {
         return ResponseEntity.ok(baseService.findById(id));
     }
 
@@ -30,12 +30,12 @@ public abstract class BaseController<T, ID> {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<T> update(@PathVariable(name = "id") ID id, @RequestBody T entity) {
+    public ResponseEntity<T> update(@PathVariable ID id, @RequestBody T entity) {
         return ResponseEntity.ok(baseService.update(id, entity));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable(name = "id") ID id) {
+    public ResponseEntity<Void> delete(@PathVariable ID id) {
         baseService.deleteById(id);
         return ResponseEntity.noContent().build();
     }

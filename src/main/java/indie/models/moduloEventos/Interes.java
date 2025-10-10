@@ -32,5 +32,6 @@ public class Interes extends BaseModel {
     @NotNull
     private Date fechaAltaInteres;
 
+    @NotNull
     private Date fechaBajaInteres;
 }

@@ -49,7 +49,6 @@ public class SecurityConfig {
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
                         .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
-                        .requestMatchers("/api/archivoEvento/**").permitAll() // Temporalmente permitido para desarrollo
                         .requestMatchers("/api/chat/**").authenticated() // Endpoints privados
                         .requestMatchers("/ws/**").permitAll() // Handshake WebSocket
                         .requestMatchers("/actuator/health").permitAll() // Permitir acceso al endpoint de health
