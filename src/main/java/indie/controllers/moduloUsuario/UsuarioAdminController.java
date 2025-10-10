@@ -29,7 +29,7 @@ public class UsuarioAdminController {
     }
 
     @GetMapping("/{email:.+}")
-    public ResponseEntity<UsuarioAdminResponseDTO> obtenerUsuario(@PathVariable String email) {
+    public ResponseEntity<UsuarioAdminResponseDTO> obtenerUsuario(@PathVariable("email") String email) {
         return ResponseEntity.ok(usuarioAdminService.obtenerPorEmail(email));
     }
 
@@ -39,7 +39,7 @@ public class UsuarioAdminController {
     }
 
     @PutMapping("/{email:.+}")
-    public ResponseEntity<UsuarioAdminResponseDTO> actualizarUsuario(@PathVariable String email,
+    public ResponseEntity<UsuarioAdminResponseDTO> actualizarUsuario(@PathVariable("email") String email,
                                                                      @Valid @RequestBody UsuarioAdminUpdateDTO dto) {
         return ResponseEntity.ok(usuarioAdminService.actualizar(email, dto));
     }

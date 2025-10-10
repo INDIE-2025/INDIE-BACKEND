@@ -16,14 +16,17 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @Entity
-public class FuncionalidadRol extends BaseModel {
+public class PermisoTipoUsuario extends BaseModel {
 
     @ManyToOne
     @NotNull
-    private Funcionalidad funcionalidad;
+    private Permiso permiso;
 
     @ManyToOne
     @NotNull
     private TipoUsuario tipoUsuario;
+
+    @NotNull
+    private boolean activo;
 
 }

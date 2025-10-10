@@ -7,8 +7,8 @@ import indie.models.moduloUsuario.Usuario;
 import indie.repositories.moduloComentarios.ComentarioRepository;
 import indie.repositories.moduloComentarios.DenunciaRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import indie.services.BaseServiceImpl;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,12 +24,14 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
     DenunciaRepository denunciaRepository;
 
-    @Autowired
-    public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository) {
+    private final NotificacionServiceImpl notificacionService;
+
+    public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository, NotificacionServiceImpl notificacionService) {
         super(comentarioRepository);
         this.comentarioRepository = comentarioRepository;
         this.usuarioRepository = usuarioRepository;
         this.denunciaRepository = denunciaRepository;
+        this.notificacionService = notificacionService;
     }
 
     @Override
@@ -59,6 +61,10 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
             ComentarUsuario comentarioGuardado = comentarioRepository.save(nuevoComentario);
 
+            // Notificar al usuario comentado
+            String contenido = usuarioComentador.getNombreUsuario() + " comento en tu perfil";
+            notificacionService.crear(usuarioComentado, "Nuevo comentario", contenido);
+
         
             return new ComentarioDTO(
                     comentarioGuardado.getId(),                    
@@ -82,10 +88,16 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
         if (!comentario.getIdUsuarioComentador().getId().equals(idUsuario)) {
             throw new Exception("No tienes permisos para eliminar este comentario");
         }
-        comentario.setDeletedAt(LocalDateTime.now());
+        LocalDateTime fechaBaja = LocalDateTime.now();
+        comentario.setDeletedAt(fechaBaja);
         comentarioRepository.save(comentario);
-    }
 
+        List<Denuncia> denunciasActivas = denunciaRepository.findByIdComentarioIdAndDeletedAtIsNull(idComentario);
+        if (!denunciasActivas.isEmpty()) {
+            denunciasActivas.forEach(denuncia -> denuncia.setDeletedAt(fechaBaja));
+            denunciaRepository.saveAll(denunciasActivas);
+        }
+    }
 
     @Override
     public void denunciarComentario(String idComentario, String idUsuario, String motivoDenuncia) throws Exception {
@@ -109,3 +121,5 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
 
 }
+
+

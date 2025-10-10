@@ -6,6 +6,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Table(name = "ChatUsuario")
 public class ChatUsuario extends BaseModel {
 
+    @Builder.Default
     private Boolean silenciado = false;
     @ManyToOne
     @JoinColumn(name = "idUsuario")
@@ -28,6 +30,8 @@ public class ChatUsuario extends BaseModel {
     @ManyToOne
     @JoinColumn(name = "idChat")
     private Chat idChat;
+
+    private LocalDateTime lastReadAt;
 
 
 

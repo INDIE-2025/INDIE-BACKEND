@@ -10,8 +10,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +19,7 @@ import java.time.LocalDateTime;
 public class SeguimientoUsuario extends BaseModel {
 
     @NotNull
+    @Builder.Default
     private boolean bloqueado = false;
     
     @ManyToOne
