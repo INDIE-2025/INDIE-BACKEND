@@ -34,10 +34,8 @@ public class Colaboracion extends BaseModel {
     @NotNull
     private Date fechaAltaColaboracion;
 
-    @NotNull
     private Date fechaBajaColaboracion;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     private EstadoColaboracion estado;
 
