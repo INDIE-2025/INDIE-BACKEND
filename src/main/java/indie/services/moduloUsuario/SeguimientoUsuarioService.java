@@ -6,6 +6,7 @@ import indie.models.moduloUsuario.Usuario;
 import indie.repositories.moduloUsuario.SeguimientoUsuarioRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +18,15 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
 
     private final SeguimientoUsuarioRepository seguimientoUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final NotificacionServiceImpl notificacionService;
 
     public SeguimientoUsuarioService(SeguimientoUsuarioRepository seguimientoUsuarioRepository,
-                                     UsuarioRepository usuarioRepository) {
+                                     UsuarioRepository usuarioRepository,
+                                     NotificacionServiceImpl notificacionService) {
         super(seguimientoUsuarioRepository);
         this.seguimientoUsuarioRepository = seguimientoUsuarioRepository;
         this.usuarioRepository = usuarioRepository;
+        this.notificacionService = notificacionService;
     }
 
     /**
@@ -61,7 +65,11 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
             relPrev.setBloqueado(false);
             relPrev.setDeletedAt(null);
             relPrev.setUpdatedAt(LocalDateTime.now());
-            return seguimientoUsuarioRepository.save(relPrev);
+            SeguimientoUsuario res = seguimientoUsuarioRepository.save(relPrev);
+            // Notificar al seguido
+            String contenido = seguidor.getNombreUsuario() + " te empezo a seguir";
+            notificacionService.crear(seguido, "Nuevo seguidor", contenido);
+            return res;
         }
 
         // Crear nueva
@@ -71,7 +79,10 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
                 .bloqueado(false)
                 .build();
 
-        return seguimientoUsuarioRepository.save(nueva);
+        SeguimientoUsuario res = seguimientoUsuarioRepository.save(nueva);
+        String contenido = seguidor.getNombreUsuario() + " te empezo a seguir";
+        notificacionService.crear(seguido, "Nuevo seguidor", contenido);
+        return res;
     }
 
     /**

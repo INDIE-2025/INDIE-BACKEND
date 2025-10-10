@@ -49,7 +49,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/calendario/{calendarioId}")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> obtenerFechasBloqueadas(
-            @PathVariable String calendarioId) {
+            @PathVariable("calendarioId") String calendarioId) {
         try {
             List<FechaBloqueadaResponseDTO> fechas = fechaBloqueadaService.obtenerFechasBloqueadas(calendarioId);
             return ResponseEntity.ok(fechas);
@@ -64,7 +64,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/calendario/{calendarioId}/rango")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> obtenerFechasBloqueadasEnRango(
-            @PathVariable String calendarioId,
+            @PathVariable("calendarioId") String calendarioId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         try {
@@ -82,7 +82,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/calendario/{calendarioId}/verificar")
     public ResponseEntity<Boolean> verificarFechaBloqueada(
-            @PathVariable String calendarioId,
+            @PathVariable("calendarioId") String calendarioId,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora) {
         try {
@@ -103,7 +103,7 @@ public class FechaBloqueadaController {
      * GET /api/calendario/fechas-bloqueadas/{id}
      */
     @GetMapping("/{id}")
-    public ResponseEntity<FechaBloqueadaResponseDTO> obtenerFechaBloqueadaPorId(@PathVariable String id) {
+    public ResponseEntity<FechaBloqueadaResponseDTO> obtenerFechaBloqueadaPorId(@PathVariable("id") String id) {
         try {
             FechaBloqueadaResponseDTO fecha = fechaBloqueadaService.obtenerFechaBloqueadaPorId(id);
             return ResponseEntity.ok(fecha);
@@ -118,7 +118,7 @@ public class FechaBloqueadaController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<FechaBloqueadaResponseDTO> actualizarFechaBloqueada(
-            @PathVariable String id,
+            @PathVariable("id") String id,
             @Valid @RequestBody ActualizarFechaBloqueadaDTO dto) {
         try {
             FechaBloqueadaResponseDTO fechaActualizada = fechaBloqueadaService.actualizarFechaBloqueada(id, dto);
@@ -181,7 +181,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/usuario/{username}/fechas-bloqueadas")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> obtenerFechasBloqueadasPorUsername(
-            @PathVariable String username) {
+            @PathVariable("username") String username) {
         try {
             var calendarioOpt = calendarioService.findByUsername(username);
             if (calendarioOpt.isEmpty()) {
@@ -200,7 +200,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/usuario/{username}/fechas-bloqueadas/rango")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> obtenerFechasBloqueadasEnRangoPorUsername(
-            @PathVariable String username,
+            @PathVariable("username") String username,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaInicio,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fechaFin) {
         try {
@@ -222,7 +222,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/usuario/{username}/fechas-bloqueadas/verificar")
     public ResponseEntity<Boolean> verificarFechaBloqueadaPorUsername(
-            @PathVariable String username,
+            @PathVariable("username") String username,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate fecha,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime hora) {
         try {
@@ -248,7 +248,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/usuario/{username}/fechas-bloqueadas/buscar")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> buscarPorMotivoPorUsername(
-            @PathVariable String username,
+            @PathVariable("username") String username,
             @RequestParam String motivo) {
         try {
             var calendarioOpt = calendarioService.findByUsername(username);
@@ -268,7 +268,7 @@ public class FechaBloqueadaController {
      */
     @GetMapping("/usuario/{username}/fechas-bloqueadas/futuras")
     public ResponseEntity<List<FechaBloqueadaResponseDTO>> obtenerFechasBloqueadasFuturasPorUsername(
-            @PathVariable String username) {
+            @PathVariable("username") String username) {
         try {
             var calendarioOpt = calendarioService.findByUsername(username);
             if (calendarioOpt.isEmpty()) {

@@ -9,6 +9,7 @@ import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 
 import java.util.Date;
 import java.util.Optional;
@@ -19,16 +20,19 @@ public class InteresServiceImpl extends BaseServiceImpl<Interes, String> impleme
     InteresRepository interesRepository;
     EventoRepository eventoRepository;
     UsuarioRepository usuarioRepository;
+    NotificacionServiceImpl notificacionService;
 
     public InteresServiceImpl(
         InteresRepository interesRepository, 
         EventoRepository eventoRepository,
-        UsuarioRepository usuarioRepository
+        UsuarioRepository usuarioRepository,
+        NotificacionServiceImpl notificacionService
     ) {
         super(interesRepository);
         this.interesRepository = interesRepository;
         this.eventoRepository = eventoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.notificacionService = notificacionService;
     }
 
     @Override
@@ -69,6 +73,16 @@ public class InteresServiceImpl extends BaseServiceImpl<Interes, String> impleme
         nuevoInteres.setFechaBajaInteres(null);
         
         interesRepository.save(nuevoInteres);
+
+        // Notificar al creador del evento
+        try {
+            Usuario creador = evento.getIdUsuario();
+            if (creador != null && !creador.getId().equals(usuario.getId())) {
+                String tipo = "Interes en evento";
+                String contenido = usuario.getNombreUsuario() + " está interesado en tu evento \"" + evento.getTituloEvento() + "\" | evt:" + evento.getId() + " user:" + usuario.getUsername();
+                notificacionService.crear(creador, tipo, contenido);
+            }
+        } catch (Exception ignored) {}
         return true;
     }
 

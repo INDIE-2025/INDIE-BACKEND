@@ -10,6 +10,7 @@ import indie.models.moduloUsuario.Usuario;
 import indie.services.moduloMensajeria.ChatServiceImpl;
 import indie.services.moduloMensajeria.MensajeService;
 import indie.services.moduloUsuario.UsuarioService;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -26,6 +27,7 @@ public class ChatWsController {
     @Autowired private ChatServiceImpl chatService;
     @Autowired private UsuarioService usuarioService;
     @Autowired private SimpMessagingTemplate messagingTemplate;
+    @Autowired private NotificacionServiceImpl notificacionService;
 
     @MessageMapping("/chat/{chatId}")
     public void sendMessage(@DestinationVariable String chatId, @Payload SendMessageRequest body, Principal principal) {
@@ -40,6 +42,11 @@ public class ChatWsController {
 
         Mensaje saved = mensajeService.enviarMensaje(chat, me, body.getMensaje());
         messagingTemplate.convertAndSend("/topic/chat/" + chatId, saved);
+
+        // Crear notificaciones simples para los demas participantes del chat
+        chatService.participantes(chat).stream()
+                .filter(u -> !u.getId().equals(me.getId()))
+                .forEach(u -> notificacionService.crear(u, "Mensaje nuevo", me.getNombreUsuario() + " te envio un mensaje"));
     }
 
     // Typing deshabilitado para ahorrar recursos

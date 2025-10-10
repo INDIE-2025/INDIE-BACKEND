@@ -7,6 +7,7 @@ import indie.models.moduloEventos.Evento;
 import indie.models.moduloUsuario.Usuario;
 import indie.dtos.moduloEventos.EventoResponse;
 import indie.repositories.moduloEventos.ColaboracionRepository;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import indie.repositories.moduloEventos.EventoRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
@@ -26,14 +27,17 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
     EventoRepository eventoRepository;
     UsuarioRepository usuarioRepository;
     ColaboracionRepository colaboracionRepository;
+    NotificacionServiceImpl notificacionService;
 
     public EventoServiceImpl(EventoRepository eventoRepository, 
                              UsuarioRepository usuarioRepository,
-                             ColaboracionRepository colaboracionRepository) {
+                             ColaboracionRepository colaboracionRepository,
+                             NotificacionServiceImpl notificacionService) {
         super(eventoRepository);
         this.eventoRepository = eventoRepository;
         this.usuarioRepository = usuarioRepository;
         this.colaboracionRepository = colaboracionRepository;
+        this.notificacionService = notificacionService;
     }
 
     @Transactional
@@ -413,6 +417,13 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
                     
                     // Añadir a la lista de colaboraciones del evento
                     evento.getColaboraciones().add(colaboracionGuardada);
+
+                    // Notificar al colaborador invitado
+                    try {
+                        String tipo = "Invitación a colaborar";
+                        String contenido = "Te invitaron a colaborar en \"" + evento.getTituloEvento() + "\" | evt:" + evento.getId();
+                        notificacionService.crear(colaborador, tipo, contenido);
+                    } catch (Exception ignored) {}
                     
                 } catch (Exception e) {
                     System.err.println("Error al procesar colaborador " + colaboradorId + ": " + e.getMessage());
@@ -422,3 +433,4 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         }
     }
 }
+

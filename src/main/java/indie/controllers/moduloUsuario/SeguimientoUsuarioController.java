@@ -182,11 +182,36 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
             
             List<Usuario> seguidores = seguimientoUsuarioService.traerSeguidores(usuarioId);
             long totalSeguidores = seguimientoUsuarioService.contarSeguidores(usuarioId);
-            
+
+            // Si tenemos usuario autenticado, adjuntar flag de si el usuario actual los sigue
+            String usuarioActualIdOpt = null;
+            if (authHeader != null) {
+                try {
+                    String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
+                    usuarioActualIdOpt = obtenerIdDesdeUsername(usuarioActualUsername);
+                } catch (Exception ignored) { /* opcional */ }
+            }
+
+            final String usuarioActualIdRef = usuarioActualIdOpt; // para uso en lambda
+
+            List<Map<String, Object>> seguidoresDto = seguidores.stream().map(u -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", u.getId());
+                m.put("nombreUsuario", u.getNombreUsuario());
+                m.put("apellidoUsuario", u.getApellidoUsuario());
+                m.put("username", u.getUsername());
+                m.put("emailUsuario", u.getEmailUsuario());
+                if (usuarioActualIdRef != null) {
+                    boolean loSigue = seguimientoUsuarioService.verificarSiSigue(usuarioActualIdRef, u.getId());
+                    m.put("usuarioActualLoSigue", loSigue);
+                }
+                return m;
+            }).toList();
+
             Map<String, Object> response = new HashMap<>();
-            response.put("seguidores", seguidores);
+            response.put("seguidores", seguidoresDto);
             response.put("totalSeguidores", totalSeguidores);
-            
+
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
@@ -225,11 +250,36 @@ public class SeguimientoUsuarioController extends BaseController<SeguimientoUsua
             
             List<Usuario> seguidos = seguimientoUsuarioService.traerSeguidos(usuarioId);
             long totalSeguidos = seguimientoUsuarioService.contarSeguidos(usuarioId);
-            
+
+            // Si tenemos usuario autenticado, adjuntar flag de si el usuario actual los sigue
+            String usuarioActualIdOpt = null;
+            if (authHeader != null) {
+                try {
+                    String usuarioActualUsername = obtenerUsernameDesdeToken(authHeader);
+                    usuarioActualIdOpt = obtenerIdDesdeUsername(usuarioActualUsername);
+                } catch (Exception ignored) { /* opcional */ }
+            }
+
+            final String usuarioActualIdRef = usuarioActualIdOpt; // para uso en lambda
+
+            List<Map<String, Object>> seguidosDto = seguidos.stream().map(u -> {
+                Map<String, Object> m = new HashMap<>();
+                m.put("id", u.getId());
+                m.put("nombreUsuario", u.getNombreUsuario());
+                m.put("apellidoUsuario", u.getApellidoUsuario());
+                m.put("username", u.getUsername());
+                m.put("emailUsuario", u.getEmailUsuario());
+                if (usuarioActualIdRef != null) {
+                    boolean loSigue = seguimientoUsuarioService.verificarSiSigue(usuarioActualIdRef, u.getId());
+                    m.put("usuarioActualLoSigue", loSigue);
+                }
+                return m;
+            }).toList();
+
             Map<String, Object> response = new HashMap<>();
-            response.put("seguidos", seguidos);
+            response.put("seguidos", seguidosDto);
             response.put("totalSeguidos", totalSeguidos);
-            
+
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));

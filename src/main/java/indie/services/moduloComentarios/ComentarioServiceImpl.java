@@ -7,6 +7,7 @@ import indie.models.moduloUsuario.Usuario;
 import indie.repositories.moduloComentarios.ComentarioRepository;
 import indie.repositories.moduloComentarios.DenunciaRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
+import indie.services.moduloNotificaciones.NotificacionServiceImpl;
 import indie.services.BaseServiceImpl;
 import org.springframework.stereotype.Service;
 
@@ -23,11 +24,14 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
 
     DenunciaRepository denunciaRepository;
 
-    public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository) {
+    private final NotificacionServiceImpl notificacionService;
+
+    public ComentarioServiceImpl(ComentarioRepository comentarioRepository, UsuarioRepository usuarioRepository, DenunciaRepository denunciaRepository, NotificacionServiceImpl notificacionService) {
         super(comentarioRepository);
         this.comentarioRepository = comentarioRepository;
         this.usuarioRepository = usuarioRepository;
         this.denunciaRepository = denunciaRepository;
+        this.notificacionService = notificacionService;
     }
 
     @Override
@@ -56,6 +60,10 @@ public class ComentarioServiceImpl extends BaseServiceImpl<ComentarUsuario,Strin
                     .build();
 
             ComentarUsuario comentarioGuardado = comentarioRepository.save(nuevoComentario);
+
+            // Notificar al usuario comentado
+            String contenido = usuarioComentador.getNombreUsuario() + " comento en tu perfil";
+            notificacionService.crear(usuarioComentado, "Nuevo comentario", contenido);
 
         
             return new ComentarioDTO(

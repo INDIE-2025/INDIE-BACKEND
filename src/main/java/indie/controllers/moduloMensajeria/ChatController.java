@@ -25,6 +25,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import java.util.List;
+import java.util.stream.Collectors;
+import indie.dtos.moduloMensajeria.ReadStateDTO;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -127,5 +130,19 @@ public class ChatController extends BaseController<Chat,String> {
         boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
         if (!isParticipant) return ResponseEntity.status(403).build();
         return ResponseEntity.ok(chatService.participantes(chat));
+    }
+
+    @GetMapping("/{chatId}/read-state")
+    public ResponseEntity<List<ReadStateDTO>> readState(@PathVariable("chatId") String chatId) {
+        Usuario me = getCurrentUser();
+        Chat chat = chatService.findById(chatId);
+        boolean isParticipant = chatService.listarChatsDeUsuario(me).stream().anyMatch(c -> c.getId().equals(chatId));
+        if (!isParticipant) return ResponseEntity.status(403).build();
+        List<Usuario> parts = chatService.participantes(chat);
+        List<ReadStateDTO> out = parts.stream().map(u -> {
+            var cu = chatService.obtenerRelacion(chat, u);
+            return new ReadStateDTO(u.getId(), cu.getLastReadAt());
+        }).collect(Collectors.toList());
+        return ResponseEntity.ok(out);
     }
 }
