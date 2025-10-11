@@ -7,12 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TipoReporteDiarioUsuarioService extends BaseServiceImpl<TipoReporteDiarioUsuario, String> {
-    
-    TipoReporteDiarioUsuarioRepository reporteUsuarioRepository;
- 
-    public TipoReporteDiarioUsuarioService(TipoReporteDiarioUsuarioRepository reporteUsuarioRepository) {
-        super(reporteUsuarioRepository);
-        this.reporteUsuarioRepository = reporteUsuarioRepository;
+    private final TipoReporteDiarioUsuarioRepository repo;
+
+    public TipoReporteDiarioUsuarioService(TipoReporteDiarioUsuarioRepository repo) {
+        super(repo);
+        this.repo = repo;
     }
-    
 }
+
