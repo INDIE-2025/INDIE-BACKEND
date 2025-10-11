@@ -3,6 +3,7 @@ package indie.repositories.moduloUsuario;
 import indie.models.moduloUsuario.Usuario;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +26,11 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
     boolean existsByEmailUsuarioIgnoreCase(String emailUsuario);
 
     Usuario findByUsername(String username);
+
+    // Métodos para búsqueda
+    List<Usuario> findByUsernameContainingIgnoreCaseOrNombreUsuarioContainingIgnoreCaseOrApellidoUsuarioContainingIgnoreCase(
+            String username, String nombreUsuario, String apellidoUsuario, Pageable pageable);
+
     
     /**
      * Busca usuarios cuyo nombre de usuario contiene la cadena dada, ignorando mayúsculas/minúsculas
