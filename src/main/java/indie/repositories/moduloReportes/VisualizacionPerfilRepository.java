@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface VisualizacionPerfilRepository extends JpaRepository<VisualizacionPerfil, Long> {
+public interface VisualizacionPerfilRepository extends JpaRepository<VisualizacionPerfil, String> {
     
     List<VisualizacionPerfil> findByUsuarioVisitadoAndFechaVisualizacionBetweenOrderByFechaVisualizacionAsc(
             Usuario usuarioVisitado, LocalDateTime fechaInicio, LocalDateTime fechaFin);

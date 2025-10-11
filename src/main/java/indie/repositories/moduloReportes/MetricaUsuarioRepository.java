@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface MetricaUsuarioRepository extends JpaRepository<MetricaUsuario, Long> {
+public interface MetricaUsuarioRepository extends JpaRepository<MetricaUsuario, String> {
     
     List<MetricaUsuario> findByUsuarioAndTipoMetricaAndFechaMetricaBetweenOrderByFechaMetricaAsc(
             Usuario usuario, TipoMetrica tipoMetrica, LocalDateTime fechaInicio, LocalDateTime fechaFin);
