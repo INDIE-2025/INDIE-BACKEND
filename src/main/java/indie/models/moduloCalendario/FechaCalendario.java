@@ -1,6 +1,7 @@
 package indie.models.moduloCalendario;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import indie.models.BaseModel;
 import indie.models.moduloEventos.Evento;
 import jakarta.persistence.*;
@@ -11,6 +12,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
@@ -30,6 +32,7 @@ public class FechaCalendario extends BaseModel {
     
     @ManyToOne
     @JoinColumn(name = "idEvento")
+    @JsonIgnore  // Evita referencias circulares en JSON
     private Evento idEvento;  // NULL = Es un bloqueo, NOT NULL = Es un evento
 
     // === CAMPOS PARA BLOQUEOS ===
@@ -83,5 +86,28 @@ public class FechaCalendario extends BaseModel {
      */
     public boolean esBloqueaActivo() {
         return esBloqueo() && estaActivo();
+    }
+
+    // === MÉTODOS PARA JSON ===
+    
+    /**
+     * Obtiene el ID del evento para serialización JSON (evita referencias circulares)
+     */
+    public String getEventoId() {
+        return this.idEvento != null ? this.idEvento.getId() : null;
+    }
+
+    /**
+     * Obtiene el título del evento para serialización JSON
+     */
+    public String getEventoTitulo() {
+        return this.idEvento != null ? this.idEvento.getTituloEvento() : null;
+    }
+
+    /**
+     * Obtiene la fecha/hora del evento para serialización JSON
+     */
+    public LocalDateTime getEventoFechaHora() {
+        return this.idEvento != null ? this.idEvento.getFechaHoraEvento() : null;
     }
 }

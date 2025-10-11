@@ -1,5 +1,6 @@
 package indie.models.moduloEventos;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import indie.models.BaseModel;
 import indie.models.enums.eventoEstado;
 import indie.models.moduloUsuario.Usuario;
@@ -30,6 +31,7 @@ public class Evento extends BaseModel {
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
+    @JsonIgnore  // Evita referencias circulares en JSON
     private Usuario idUsuario;
 
     private String descripcionEvento;
@@ -53,6 +55,30 @@ public class Evento extends BaseModel {
     private eventoEstado estadoEvento;
 
     @OneToMany(mappedBy = "idEvento", fetch = FetchType.LAZY)
+    @JsonIgnore  // Evita referencias circulares en JSON
     @Builder.Default
     private List<Colaboracion> colaboraciones = new ArrayList<>();
+
+    // === MÉTODOS PARA JSON ===
+    
+    /**
+     * Obtiene el ID del usuario para serialización JSON (evita referencias circulares)
+     */
+    public String getUsuarioId() {
+        return this.idUsuario != null ? this.idUsuario.getId() : null;
+    }
+
+    /**
+     * Obtiene el nombre del usuario para serialización JSON
+     */
+    public String getUsuarioNombre() {
+        return this.idUsuario != null ? this.idUsuario.getNombreUsuario() : null;
+    }
+
+    /**
+     * Obtiene el username del usuario para serialización JSON
+     */
+    public String getUsername() {
+        return this.idUsuario != null ? this.idUsuario.getUsername() : null;
+    }
 }

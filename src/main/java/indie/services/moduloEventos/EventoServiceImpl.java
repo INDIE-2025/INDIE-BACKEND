@@ -5,9 +5,13 @@ import indie.models.enums.EstadoColaboracion;
 import indie.models.moduloEventos.Colaboracion;
 import indie.models.moduloEventos.Evento;
 import indie.models.moduloUsuario.Usuario;
+import indie.models.moduloCalendario.Calendario;
+import indie.models.moduloCalendario.FechaCalendario;
 import indie.dtos.moduloEventos.EventoResponse;
 import indie.repositories.moduloEventos.ColaboracionRepository;
+import indie.repositories.moduloCalendario.FechaCalendarioRepository;
 import indie.services.moduloNotificaciones.NotificacionServiceImpl;
+import indie.services.moduloCalendario.CalendarioServiceImpl;
 import indie.repositories.moduloEventos.EventoRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
@@ -27,16 +31,22 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
     EventoRepository eventoRepository;
     UsuarioRepository usuarioRepository;
     ColaboracionRepository colaboracionRepository;
+    FechaCalendarioRepository fechaCalendarioRepository;
+    CalendarioServiceImpl calendarioService;
     NotificacionServiceImpl notificacionService;
 
     public EventoServiceImpl(EventoRepository eventoRepository, 
                              UsuarioRepository usuarioRepository,
                              ColaboracionRepository colaboracionRepository,
+                             FechaCalendarioRepository fechaCalendarioRepository,
+                             CalendarioServiceImpl calendarioService,
                              NotificacionServiceImpl notificacionService) {
         super(eventoRepository);
         this.eventoRepository = eventoRepository;
         this.usuarioRepository = usuarioRepository;
         this.colaboracionRepository = colaboracionRepository;
+        this.fechaCalendarioRepository = fechaCalendarioRepository;
+        this.calendarioService = calendarioService;
         this.notificacionService = notificacionService;
     }
 
@@ -87,6 +97,11 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         }
 
         Evento guardado = eventoRepository.save(e);
+        
+        // Agregar evento al calendario si está publicado
+        if (guardado.getEstadoEvento() == indie.models.enums.eventoEstado.PUBLICADO) {
+            agregarEventoAlCalendario(guardado);
+        }
         
         // Procesar colaboradores si están presentes
         List<String> colaboradoresIds = new ArrayList<>();
@@ -159,6 +174,11 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         }
 
         Evento guardado = eventoRepository.save(existente);
+        
+        // Agregar evento al calendario si está publicado
+        if (guardado.getEstadoEvento() == indie.models.enums.eventoEstado.PUBLICADO) {
+            agregarEventoAlCalendario(guardado);
+        }
         
         // Procesar colaboradores si están presentes
         List<String> colaboradoresIds = new ArrayList<>();
@@ -263,6 +283,11 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         }
 
         Evento guardado = eventoRepository.save(e);
+        
+        // Agregar evento al calendario si cambió a PUBLICADO
+        if (guardado.getEstadoEvento() == indie.models.enums.eventoEstado.PUBLICADO) {
+            agregarEventoAlCalendario(guardado);
+        }
         
         // Log the saved entity for debugging
         System.out.println("Draft saved successfully - ID: " + guardado.getId() + 
@@ -372,6 +397,62 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
         return eventoOpt.get();
     }
     
+    /**
+     * Agrega un evento al calendario del usuario creador
+     * @param evento Evento a agregar al calendario
+     */
+    @Transactional
+    private void agregarEventoAlCalendario(Evento evento) {
+        try {
+            // Obtener el calendario del usuario creador del evento
+            Optional<Calendario> calendarioOpt = calendarioService.findByUsuarioId(evento.getIdUsuario().getId());
+            
+            if (calendarioOpt.isPresent()) {
+                Calendario calendario = calendarioOpt.get();
+                
+                // Verificar si el evento ya está en el calendario para evitar duplicados
+                List<FechaCalendario> eventosExistentes = fechaCalendarioRepository.findEventosByCalendario(calendario.getId());
+                boolean eventoYaExiste = eventosExistentes.stream()
+                    .anyMatch(fc -> fc.getIdEvento() != null && fc.getIdEvento().getId().equals(evento.getId()));
+                
+                if (!eventoYaExiste) {
+                    // Extraer fecha y hora del evento
+                    LocalDateTime fechaHoraEvento = evento.getFechaHoraEvento();
+                    
+                    if (fechaHoraEvento != null) {
+                        // Crear la entrada en FechaCalendario con las fechas y horas del evento
+                        FechaCalendario fechaCalendario = FechaCalendario.builder()
+                            .idCalendario(calendario)
+                            .idEvento(evento)
+                            .fechaDesde(fechaHoraEvento.toLocalDate())  // Fecha del evento
+                            .fechaHasta(fechaHoraEvento.toLocalDate())  // Mismo día (eventos de un día)
+                            .horaDesde(fechaHoraEvento.toLocalTime())   // Hora de inicio del evento
+                            .horaHasta(fechaHoraEvento.toLocalTime().plusHours(2))  // Duración de 2 horas por defecto
+                            .todoElDia(false)  // Los eventos tienen hora específica
+                            .build();
+                        
+                        fechaCalendarioRepository.save(fechaCalendario);
+                        
+                        System.out.println("Evento '" + evento.getTituloEvento() + "' (ID: " + evento.getId() + 
+                                         ") agregado al calendario de " + evento.getIdUsuario().getUsername() +
+                                         " para el " + fechaHoraEvento.toLocalDate() + 
+                                         " de " + fechaHoraEvento.toLocalTime() + 
+                                         " a " + fechaHoraEvento.toLocalTime().plusHours(2));
+                    } else {
+                        System.err.println("No se puede agregar evento al calendario: fechaHoraEvento es null para evento " + evento.getId());
+                    }
+                } else {
+                    System.out.println("El evento '" + evento.getTituloEvento() + "' ya existe en el calendario");
+                }
+            } else {
+                System.err.println("No se encontró calendario para el usuario: " + evento.getIdUsuario().getUsername());
+            }
+        } catch (Exception e) {
+            System.err.println("Error al agregar evento al calendario: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Guarda las relaciones de colaboración entre el evento y los usuarios colaboradores
      * @param evento Evento al que se asocian los colaboradores
