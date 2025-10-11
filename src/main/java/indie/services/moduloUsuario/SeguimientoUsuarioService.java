@@ -7,6 +7,7 @@ import indie.repositories.moduloUsuario.SeguimientoUsuarioRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
 import indie.services.BaseServiceImpl;
 import indie.services.moduloNotificaciones.NotificacionServiceImpl;
+import indie.models.moduloNotificaciones.NotificationTypes;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,8 +68,8 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
             relPrev.setUpdatedAt(LocalDateTime.now());
             SeguimientoUsuario res = seguimientoUsuarioRepository.save(relPrev);
             // Notificar al seguido
-            String contenido = seguidor.getNombreUsuario() + " te empezo a seguir";
-            notificacionService.crear(seguido, "Nuevo seguidor", contenido);
+            String contenido = seguidor.getNombreUsuario() + " te empezo a seguir | user:" + seguidor.getUsername();
+            notificacionService.crear(seguido, NotificationTypes.NUEVO_SEGUIDOR, contenido);
             return res;
         }
 
@@ -80,8 +81,8 @@ public class SeguimientoUsuarioService extends BaseServiceImpl<SeguimientoUsuari
                 .build();
 
         SeguimientoUsuario res = seguimientoUsuarioRepository.save(nueva);
-        String contenido = seguidor.getNombreUsuario() + " te empezo a seguir";
-        notificacionService.crear(seguido, "Nuevo seguidor", contenido);
+        String contenido = seguidor.getNombreUsuario() + " te empezo a seguir | user:" + seguidor.getUsername();
+        notificacionService.crear(seguido, NotificationTypes.NUEVO_SEGUIDOR, contenido);
         return res;
     }
 

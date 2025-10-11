@@ -10,6 +10,7 @@ import indie.services.BaseServiceImpl;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import indie.services.moduloNotificaciones.NotificacionServiceImpl;
+import indie.models.moduloNotificaciones.NotificationTypes;
 
 import java.util.Date;
 import java.util.Optional;
@@ -78,7 +79,7 @@ public class InteresServiceImpl extends BaseServiceImpl<Interes, String> impleme
         try {
             Usuario creador = evento.getIdUsuario();
             if (creador != null && !creador.getId().equals(usuario.getId())) {
-                String tipo = "Interes en evento";
+                String tipo = NotificationTypes.INTERESADO_EVENTO;
                 String contenido = usuario.getNombreUsuario() + " está interesado en tu evento \"" + evento.getTituloEvento() + "\" | evt:" + evento.getId() + " user:" + usuario.getUsername();
                 notificacionService.crear(creador, tipo, contenido);
             }
