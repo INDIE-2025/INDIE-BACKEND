@@ -1,37 +1,29 @@
 package indie.models.moduloReportes;
 
+import indie.models.BaseModel;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import indie.models.BaseModel;
-import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 
-import java.math.BigDecimal;
-
-@Entity
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
+@Entity
 public class TipoReporteDiarioUsuario extends BaseModel {
-    
+
     @NotNull
-    private BigDecimal valorMetrica;
-    
+    private String nombre;
+
     @ManyToOne
-    @NotNull
+    @JoinColumn(name = "idTipoMetrica")
     private TipoMetrica tipoMetrica;
-    
-    // Métodos de utilidad
-    public String getNombreMetrica() {
-        return tipoMetrica != null ? tipoMetrica.getNombre() : null;
-    }
-    
-    public String getUnidadMedida() {
-        return tipoMetrica != null ? tipoMetrica.getUnidadMedida() : null;
-    }
 }
+

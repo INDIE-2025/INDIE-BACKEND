@@ -7,13 +7,11 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class ReporteAdminMensualService extends BaseServiceImpl<ReporteAdminMensual, String> {
-    
-    ReporteAdminMensualRepository reporteRepository;
- 
-    public ReporteAdminMensualService(ReporteAdminMensualRepository reporteRepository) {
-        super(reporteRepository);
-        this.reporteRepository = reporteRepository;
+    private final ReporteAdminMensualRepository repo;
+
+    public ReporteAdminMensualService(ReporteAdminMensualRepository repo) {
+        super(repo);
+        this.repo = repo;
     }
-    
 }
 
