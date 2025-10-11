@@ -16,7 +16,7 @@ public class CalendarioController {
     }
 
     @GetMapping("/usuario/{username}")
-    public ResponseEntity<Calendario> obtenerCalendarioPorUsername(@PathVariable("username") String username) {
+    public ResponseEntity<Calendario> obtenerCalendarioPorUsername(@PathVariable String username) {
         try {
             return calendarioService.findByUsername(username)
                     .map(ResponseEntity::ok)
@@ -28,7 +28,7 @@ public class CalendarioController {
 
     
     @GetMapping("/usuario/id/{usuarioId}")
-    public ResponseEntity<Calendario> obtenerCalendarioPorUsuarioId(@PathVariable("usuarioId") String usuarioId) {
+    public ResponseEntity<Calendario> obtenerCalendarioPorUsuarioId(@PathVariable String usuarioId) {
         try {
             return calendarioService.findByUsuarioId(usuarioId)
                     .map(ResponseEntity::ok)

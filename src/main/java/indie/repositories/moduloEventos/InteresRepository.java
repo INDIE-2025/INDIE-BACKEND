@@ -41,4 +41,15 @@ public interface InteresRepository extends JpaRepository<Interes, String> {
      */
     @Query("SELECT COUNT(i) FROM Interes i WHERE i.idEvento.id = :idEvento AND i.fechaBajaInteres IS NULL")
     int countInteresadosPorEvento(@Param("idEvento") String idEvento);
+
+        // Contar usuarios interesados en un evento (solo intereses activos)
+    @Query("SELECT COUNT(i) FROM Interes i WHERE i.idEvento = :evento AND i.fechaBajaInteres IS NULL")
+    long countByEvento(@Param("evento") Evento evento);
+
+    @Query("SELECT COUNT(i) FROM Interes i JOIN i.idEvento e WHERE e.idUsuario.id = :usuarioId " +
+           "AND i.fechaAltaInteres >= :fechaInicio AND i.fechaAltaInteres < :fechaFin")
+    long contarInteresesPorUsuarioYFecha(
+            @Param("usuarioId") String usuarioId,
+            @Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @Param("fechaFin") java.time.LocalDateTime fechaFin);
 }

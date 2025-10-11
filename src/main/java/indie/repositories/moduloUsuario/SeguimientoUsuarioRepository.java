@@ -49,5 +49,16 @@ public interface SeguimientoUsuarioRepository extends JpaRepository<SeguimientoU
     @Query("SELECT s.usuarioSeguido FROM SeguimientoUsuario s WHERE s.usuarioSeguidor.id = :usuarioId AND s.bloqueado = true AND s.deletedAt IS NULL")
     List<Usuario> findUsuariosBloqueadosByUsuarioId(@Param("usuarioId") String usuarioId);
     
+    // Contar seguidores nuevos en un período específico
+    @Query("SELECT COUNT(s) FROM SeguimientoUsuario s WHERE s.usuarioSeguido = :usuario AND s.bloqueado = false AND s.deletedAt IS NULL AND s.createdAt BETWEEN :fechaInicio AND :fechaFin")
+    long countByUsuarioSeguidoAndCreatedAtBetween(@Param("usuario") Usuario usuario, @Param("fechaInicio") java.time.LocalDateTime fechaInicio, @Param("fechaFin") java.time.LocalDateTime fechaFin);
+    
+    @Query("SELECT COUNT(s) FROM SeguimientoUsuario s WHERE s.usuarioSeguido.id = :usuarioId " +
+           "AND s.bloqueado = false AND s.deletedAt IS NULL " +
+           "AND s.createdAt >= :fechaInicio AND s.createdAt < :fechaFin")
+    long contarSeguidoresPorUsuarioYFecha(
+            @Param("usuarioId") String usuarioId,
+            @Param("fechaInicio") java.time.LocalDateTime fechaInicio,
+            @Param("fechaFin") java.time.LocalDateTime fechaFin);
 }
 
