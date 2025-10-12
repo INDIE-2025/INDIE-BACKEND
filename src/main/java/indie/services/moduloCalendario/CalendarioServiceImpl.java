@@ -110,4 +110,12 @@ public class CalendarioServiceImpl extends BaseServiceImpl<Calendario,String> im
     public Optional<CalendarioDTO> findDTOByUsername(String username) {
         return findByUsername(username).map(this::convertirADTO);
     }
+
+    /**
+     * Obtener calendario como DTO por ID del calendario directamente
+     */
+    public Optional<CalendarioDTO> findDTOByCalendarioId(String calendarioId) {
+        Optional<Calendario> calendario = Optional.ofNullable(findById(calendarioId));
+        return calendario.map(this::convertirADTO);
+    }
 }

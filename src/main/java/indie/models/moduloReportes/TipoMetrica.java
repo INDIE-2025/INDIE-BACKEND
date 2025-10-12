@@ -19,5 +19,14 @@ public class TipoMetrica extends BaseModel {
 
     @NotNull
     private String nombre;
+    
+    private String descripcion;
+    
+    @NotNull
+    private String unidadMedida;
+    
+    @NotNull
+    @Builder.Default
+    private Boolean activo = true;
 }
 

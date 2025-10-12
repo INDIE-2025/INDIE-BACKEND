@@ -65,4 +65,16 @@ public class CalendarioController {
         }
     }
 
+    @GetMapping("/dto/{calendarioId}")
+    public ResponseEntity<CalendarioDTO> obtenerCalendarioDTOPorCalendarioId(@PathVariable String calendarioId) {
+        try {
+            return calendarioService.findDTOByCalendarioId(calendarioId)
+                    .map(ResponseEntity::ok)
+                    .orElse(ResponseEntity.notFound().build());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }

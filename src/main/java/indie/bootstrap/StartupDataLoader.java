@@ -6,12 +6,14 @@ import indie.models.moduloUsuario.PermisoTipoUsuario;
 import indie.models.moduloUsuario.SubTipoUsuario;
 import indie.models.moduloUsuario.TipoUsuario;
 import indie.models.moduloUsuario.Usuario;
+import indie.models.moduloReportes.TipoMetrica;
 import indie.repositories.moduloUsuario.ConfiguracionSistemaRepository;
 import indie.repositories.moduloUsuario.PermisoRepository;
 import indie.repositories.moduloUsuario.PermisoTipoUsuarioRepository;
 import indie.repositories.moduloUsuario.SubTipoUsuarioRepository;
 import indie.repositories.moduloUsuario.TipoUsuarioRepository;
 import indie.repositories.moduloUsuario.UsuarioRepository;
+import indie.repositories.moduloReportes.TipoMetricaRepository;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -126,6 +128,7 @@ public class StartupDataLoader implements ApplicationRunner {
     private final PermisoRepository permisoRepository;
     private final PermisoTipoUsuarioRepository permisoTipoUsuarioRepository;
     private final UsuarioRepository usuarioRepository;
+    private final TipoMetricaRepository tipoMetricaRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -136,6 +139,7 @@ public class StartupDataLoader implements ApplicationRunner {
         Map<String, TipoUsuario> tiposUsuario = seedTiposUsuario();
         Map<String, SubTipoUsuario> subtipos = seedSubtiposBase(tiposUsuario);
         seedPermisosPorTipo(tiposUsuario, permisos);
+        seedTiposMetrica();
         seedAdministrador(subtipos.get("Administrador"));
     }
 
@@ -252,6 +256,27 @@ public class StartupDataLoader implements ApplicationRunner {
         admin.setFechaVerificacion(LocalDateTime.now());
         admin.setSubTipoUsuario(subTipoAdministrador);
         usuarioRepository.save(admin);
+    }
+
+    private void seedTiposMetrica() {
+        // Crear tipos de métrica básicos si no existen
+        crearTipoMetricaSiNoExiste("VISUALIZACIONES_PERFIL", "Visualizaciones del Perfil", "visualizaciones");
+        crearTipoMetricaSiNoExiste("USUARIOS_INTERESADOS", "Usuarios Interesados en Eventos", "usuarios");
+        crearTipoMetricaSiNoExiste("SEGUIDORES_NUEVOS", "Seguidores Nuevos", "seguidores");
+        crearTipoMetricaSiNoExiste("EVENTOS_POPULARES", "Eventos Populares", "eventos");
+        crearTipoMetricaSiNoExiste("COMENTARIOS_RECIBIDOS", "Comentarios Recibidos", "comentarios");
+    }
+
+    private void crearTipoMetricaSiNoExiste(String nombre, String descripcion, String unidadMedida) {
+        if (!tipoMetricaRepository.existsByNombre(nombre)) {
+            TipoMetrica tipoMetrica = TipoMetrica.builder()
+                .nombre(nombre)
+                .descripcion(descripcion)
+                .unidadMedida(unidadMedida)
+                .activo(true)
+                .build();
+            tipoMetricaRepository.save(tipoMetrica);
+        }
     }
 
     private record ConfiguracionSeed(String nombre, boolean activo, Integer valor) {
