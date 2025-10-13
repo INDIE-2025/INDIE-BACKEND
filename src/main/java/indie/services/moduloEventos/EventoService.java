@@ -23,4 +23,6 @@ public interface EventoService extends BaseService<Evento, String> {
     Evento findById(String idUsuario);
     
     List<Evento> obtenerPublicadosPorUsuario(String idUsuario);
+    
+    List<Evento> obtenerProximosEventosPublicados();
 }
