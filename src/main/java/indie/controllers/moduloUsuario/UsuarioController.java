@@ -292,4 +292,38 @@ public class UsuarioController extends BaseController<Usuario, String> {
                     .body(Map.of("error", "Error al buscar usuarios: " + ex.getMessage()));
         }
     }
+    
+    /**
+     * Endpoint para obtener los artistas más recientes limitados a cierta cantidad
+     * 
+     * @return Lista de artistas ordenados por fecha de creación más reciente
+     */
+    @GetMapping("/artistas-recientes")
+    public ResponseEntity<?> obtenerArtistasRecientes() {
+        try {
+            // Limitamos a 4 artistas como solicitado
+            List<Usuario> artistas = usuarioService.obtenerArtistasRecientes(4);
+            
+            if (artistas.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            
+            // Debug
+            System.out.println("-------------------------------------------------------");
+            System.out.println("Artistas recientes encontrados: " + artistas.size());
+            for (Usuario a : artistas) {
+                System.out.println("Artista: " + a.getUsername() + 
+                                   ", Nombre: " + a.getNombreUsuario() + 
+                                   ", Fecha creación: " + a.getCreatedAt());
+            }
+            System.out.println("-------------------------------------------------------");
+            
+            return ResponseEntity.ok(artistas);
+        } catch (Exception ex) {
+            System.out.println("Error al obtener artistas recientes: " + ex.getMessage());
+            ex.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener artistas recientes: " + ex.getMessage()));
+        }
+    }
 }

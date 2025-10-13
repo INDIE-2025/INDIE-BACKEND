@@ -35,4 +35,7 @@ public interface EventoRepository extends JpaRepository<Evento, String> {
     
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM Evento e WHERE e.tituloEvento = :titulo AND e.estadoEvento = :estado AND e.idUsuario.id = :idUsuario AND e.fechaBajaEvento IS NULL")
     boolean existsBorradorByTituloAndUsuario(@Param("titulo") String titulo, @Param("estado") eventoEstado estado, @Param("idUsuario") String idUsuario);
+    
+    @Query("SELECT e FROM Evento e WHERE e.estadoEvento = :estado AND e.fechaHoraEvento >= :fechaActual AND e.fechaBajaEvento IS NULL ORDER BY e.fechaHoraEvento ASC")
+    List<Evento> findPublishedWithDateGreaterThanEqual(@Param("estado") eventoEstado estado, @Param("fechaActual") LocalDateTime fechaActual);
 }

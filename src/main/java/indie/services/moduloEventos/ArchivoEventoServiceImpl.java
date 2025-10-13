@@ -135,34 +135,24 @@ public class ArchivoEventoServiceImpl extends BaseServiceImpl<ArchivoEvento, Str
         eventoRepository.findById(sourceEventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Source evento not found"));
         
-        eventoRepository.findById(targetEventoId)
+        Evento targetEvento = eventoRepository.findById(targetEventoId)
                 .orElseThrow(() -> new IllegalArgumentException("Target evento not found"));
                 
         // Get all images for the source event
         List<ArchivoEvento> sourceImages = archivoEventoRepository.findByEventoId(sourceEventoId);
         
-        // Create new ArchivoEvento objects for the target event
-        List<ArchivoEvento> copiedImages = new java.util.ArrayList<>();
+        // Reasignar directamente las imágenes existentes del borrador al evento publicado
+        // sin crear nuevos registros en la base de datos
+        List<ArchivoEvento> updatedImages = new java.util.ArrayList<>();
         
         for (ArchivoEvento sourceImage : sourceImages) {
-            ArchivoEvento newImage = new ArchivoEvento();
+            // Actualizar la referencia de la imagen al nuevo evento publicado
+            sourceImage.setIdEvento(targetEvento);
             
-            // Set the target event
-            newImage.setIdEvento(eventoRepository.findById(targetEventoId).get());
-            
-            // Copy metadata
-            newImage.setFechaAltaArchivoEvento(new java.util.Date());
-            newImage.setFechaBajaArchivoEvento(sourceImage.getFechaBajaArchivoEvento());
-            newImage.setTipoArchivoEvento(sourceImage.getTipoArchivoEvento());
-            
-            // Use the same URL - we're not physically copying the file,
-            // just creating a new reference to it
-            newImage.setUrlArchivoEvento(sourceImage.getUrlArchivoEvento());
-            
-            // Save the new image
-            copiedImages.add(archivoEventoRepository.save(newImage));
+            // No crear un nuevo registro, solo actualizar el existente
+            updatedImages.add(archivoEventoRepository.save(sourceImage));
         }
         
-        return copiedImages;
+        return updatedImages;
     }
 }

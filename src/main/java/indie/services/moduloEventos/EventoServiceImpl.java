@@ -513,4 +513,24 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
             }
         }
     }
+    
+    @Override
+    public List<Evento> obtenerProximosEventosPublicados() {
+        System.out.println("=== BUSCANDO PRÓXIMOS EVENTOS PUBLICADOS ===");
+        
+        // Obtener eventos publicados con fecha mayor o igual a la fecha actual
+        LocalDateTime fechaActual = LocalDateTime.now();
+        List<Evento> eventos = eventoRepository.findPublishedWithDateGreaterThanEqual(indie.models.enums.eventoEstado.PUBLICADO, fechaActual);
+        
+        // Imprimir información sobre los eventos encontrados
+        System.out.println("Cantidad de próximos eventos encontrados: " + eventos.size());
+        for (Evento evento : eventos) {
+            System.out.println("- Evento ID: " + evento.getId() + 
+                ", Título: " + evento.getTituloEvento() + 
+                ", Estado: " + evento.getEstadoEvento() +
+                ", Fecha: " + evento.getFechaHoraEvento());
+        }
+        
+        return eventos;
+    }
 }
