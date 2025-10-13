@@ -199,4 +199,31 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
             return new ArrayList<>();
         }
     }
+    
+    /**
+     * Obtiene una lista de usuarios de tipo artista que no han sido dados de baja,
+     * ordenados por fecha de creación descendente y limitados a cierta cantidad.
+     * 
+     * @param limit Número máximo de resultados a devolver
+     * @return Lista de artistas ordenados por fecha de creación más reciente
+     */
+    public List<Usuario> obtenerArtistasRecientes(int limit) {
+        try {
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+            List<Usuario> artistas = usuarioRepository.findLatestArtistas(pageable);
+            
+            // Eliminar propiedades sensibles antes de devolver
+            artistas.forEach(artista -> {
+                artista.setPassword(null);  // No enviar contraseña
+                artista.setFotoPerfil(null);  // No enviar foto (se obtiene por separado)
+                artista.setEventos(null);   // No enviar eventos para evitar recursión
+            });
+            
+            return artistas;
+        } catch (Exception e) {
+            System.out.println("Error al obtener artistas recientes: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }

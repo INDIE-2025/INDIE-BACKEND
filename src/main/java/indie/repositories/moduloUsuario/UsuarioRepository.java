@@ -53,4 +53,15 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
             "LOWER(u.emailUsuario) LIKE LOWER(CONCAT('%', :searchTerm, '%'))) AND " +
             "u.deletedAt IS NULL")
     List<Usuario> findByAnyField(@Param("searchTerm") String searchTerm);
+    
+    /**
+     * Busca usuarios artistas que no han sido dados de baja, ordenados por fecha de creación descendente y limitados a cierta cantidad.
+     * @param tipoUsuarioId ID del tipo de usuario artista
+     * @param limit Número máximo de resultados a devolver
+     * @return Lista de artistas ordenados por fecha de creación más reciente
+     */
+    @Query(value = "SELECT u FROM Usuario u JOIN FETCH u.subTipoUsuario stu JOIN FETCH stu.tipoUsuario tu " +
+            "WHERE tu.nombreTipoUsuario = 'ARTISTA' AND u.deletedAt IS NULL " +
+            "ORDER BY u.createdAt DESC")
+    List<Usuario> findLatestArtistas(org.springframework.data.domain.Pageable pageable);
 }
