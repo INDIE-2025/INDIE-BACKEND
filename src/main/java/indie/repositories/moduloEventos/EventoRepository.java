@@ -29,7 +29,8 @@ public interface EventoRepository extends JpaRepository<Evento, String> {
     // Buscar eventos por usuario en un período de tiempo
     @Query("SELECT e FROM Evento e WHERE e.idUsuario = :usuario AND e.fechaHoraEvento BETWEEN :fechaInicio AND :fechaFin AND e.fechaBajaEvento IS NULL")
     List<Evento> findByIdUsuarioAndFechaHoraEventoBetween(@Param("usuario") indie.models.moduloUsuario.Usuario usuario, @Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);
-}
+
     
     @Query("SELECT e FROM Evento e WHERE e.estadoEvento = :estado AND e.fechaHoraEvento >= :fechaActual AND e.fechaBajaEvento IS NULL ORDER BY e.fechaHoraEvento ASC")
     List<Evento> findPublishedWithDateGreaterThanEqual(@Param("estado") eventoEstado estado, @Param("fechaActual") LocalDateTime fechaActual);
+}
