@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Pageable;
 
 @Repository
 public interface UsuarioRepository extends JpaRepository<Usuario, String> {
@@ -70,4 +71,17 @@ public interface UsuarioRepository extends JpaRepository<Usuario, String> {
             "WHERE tu.nombreTipoUsuario = 'ARTISTA' AND u.deletedAt IS NULL " +
             "ORDER BY u.createdAt DESC")
     List<Usuario> findLatestArtistas(org.springframework.data.domain.Pageable pageable);
+
+    /**
+     * Devuelve usuarios pertenecientes a un tipo (por nombre del TipoUsuario, p.ej. 'ARTISTA' o 'ESTABLECIMIENTO')
+     * ordenados por cantidad de seguidores (desc) y limitados por pageable.
+     */
+    @Query("SELECT u FROM Usuario u " +
+           "LEFT JOIN SeguimientoUsuario s ON s.usuarioSeguido = u AND s.deletedAt IS NULL AND s.bloqueado = false " +
+           "JOIN u.subTipoUsuario stu " +
+           "JOIN stu.tipoUsuario tu " +
+           "WHERE u.deletedAt IS NULL AND UPPER(tu.nombreTipoUsuario) = UPPER(:tipo) " +
+           "GROUP BY u " +
+           "ORDER BY COUNT(s) DESC, u.createdAt DESC")
+    List<Usuario> findTopByFollowersAndTipo(@Param("tipo") String tipo, Pageable pageable);
 }
