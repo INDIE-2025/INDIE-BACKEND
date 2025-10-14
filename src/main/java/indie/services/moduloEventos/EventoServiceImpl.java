@@ -377,7 +377,7 @@ public class EventoServiceImpl extends BaseServiceImpl<Evento, String> implement
     
     public boolean existeEventoConTituloYFecha(String titulo, LocalDateTime fecha) {
         // Solo verificar duplicados con eventos PUBLICADOS, no con borradores
-        return eventoRepository.existsByTituloAndFechaAndEstadoEventoAndFechaBajaIsNull(titulo, fecha, indie.models.enums.eventoEstado.PUBLICADO);
+        return eventoRepository.existsByTituloAndFechaAndFechaBajaIsNull(titulo, fecha);
     }
 
     @Override
