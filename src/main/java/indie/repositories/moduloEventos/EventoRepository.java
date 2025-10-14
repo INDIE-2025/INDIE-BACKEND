@@ -21,6 +21,9 @@ public interface EventoRepository extends JpaRepository<Evento, String> {
     
     @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM Evento e WHERE e.tituloEvento = :titulo AND e.fechaHoraEvento = :fecha AND e.fechaBajaEvento IS NULL")
     boolean existsByTituloAndFechaAndFechaBajaIsNull(@Param("titulo") String titulo, @Param("fecha") LocalDateTime fecha);
+    
+    @Query("SELECT CASE WHEN COUNT(e) > 0 THEN true ELSE false END FROM Evento e WHERE e.tituloEvento = :titulo AND e.fechaHoraEvento = :fecha AND e.estadoEvento = :estado AND e.fechaBajaEvento IS NULL")
+    boolean existsByTituloAndFechaAndEstadoEventoAndFechaBajaIsNull(@Param("titulo") String titulo, @Param("fecha") LocalDateTime fecha, @Param("estado") eventoEstado estado);
 
     // Métodos para búsqueda
     List<Evento> findByTituloEventoContainingIgnoreCaseOrDescripcionEventoContainingIgnoreCase(
@@ -29,7 +32,7 @@ public interface EventoRepository extends JpaRepository<Evento, String> {
     // Buscar eventos por usuario en un período de tiempo
     @Query("SELECT e FROM Evento e WHERE e.idUsuario = :usuario AND e.fechaHoraEvento BETWEEN :fechaInicio AND :fechaFin AND e.fechaBajaEvento IS NULL")
     List<Evento> findByIdUsuarioAndFechaHoraEventoBetween(@Param("usuario") indie.models.moduloUsuario.Usuario usuario, @Param("fechaInicio") LocalDateTime fechaInicio, @Param("fechaFin") LocalDateTime fechaFin);
-}
     
     @Query("SELECT e FROM Evento e WHERE e.estadoEvento = :estado AND e.fechaHoraEvento >= :fechaActual AND e.fechaBajaEvento IS NULL ORDER BY e.fechaHoraEvento ASC")
     List<Evento> findPublishedWithDateGreaterThanEqual(@Param("estado") eventoEstado estado, @Param("fechaActual") LocalDateTime fechaActual);
+}
