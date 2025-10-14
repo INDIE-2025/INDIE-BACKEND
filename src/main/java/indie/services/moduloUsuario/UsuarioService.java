@@ -226,4 +226,26 @@ public class UsuarioService extends BaseServiceImpl<Usuario, String> {
             return new ArrayList<>();
         }
     }
+
+    /**
+     * Obtiene top usuarios por cantidad de seguidores para un tipo dado (ARTISTA / ESTABLECIMIENTO).
+     */
+    public List<Usuario> obtenerTopPorSeguidoresPorTipo(String tipo, int limit) {
+        try {
+            org.springframework.data.domain.Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
+            List<Usuario> usuarios = usuarioRepository.findTopByFollowersAndTipo(tipo, pageable);
+
+            // Sanitizar campos sensibles / pesados
+            usuarios.forEach(u -> {
+                u.setPassword(null);
+                u.setFotoPerfil(null);
+                u.setEventos(null);
+            });
+            return usuarios;
+        } catch (Exception e) {
+            System.out.println("Error al obtener top por seguidores: " + e.getMessage());
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }
