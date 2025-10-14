@@ -6,7 +6,6 @@ import indie.models.moduloUsuario.Usuario;
 import indie.security.JwtUtils;
 import indie.services.moduloUsuario.SeguimientoUsuarioService;
 import indie.services.moduloUsuario.UsuarioService;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
 
 import java.util.List;
 import java.util.Map;
@@ -198,6 +197,11 @@ public class UsuarioController extends BaseController<Usuario, String> {
         var opt = usuarioService.buscarPorEmail(email);
         if (opt.isPresent()) {
             Usuario usuarioExistente = opt.get();
+            // Validar entrada: nombreUsuario es obligatorio para evitar fallos de validacion al guardar
+            if (usuario.getNombreUsuario() == null || usuario.getNombreUsuario().isBlank()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "El campo nombreUsuario es obligatorio"));
+            }
             usuario.setUsername(usuarioExistente.getUsername()); // No permitir cambiar el username
             usuario.setEmailUsuario(usuarioExistente.getEmailUsuario()); // No permitir cambiar el email
             usuario.setPassword(usuarioExistente.getPassword()); // No permitir cambiar el password aquí
@@ -205,7 +209,22 @@ public class UsuarioController extends BaseController<Usuario, String> {
             if (usuario.getNombreUsuario() != null) {
                 usuarioExistente.setNombreUsuario(usuario.getNombreUsuario());
             }
-            Usuario usuarioActualizado = usuarioService.save(usuario);
+            if (usuario.getApellidoUsuario() != null) {
+                usuarioExistente.setApellidoUsuario(usuario.getApellidoUsuario());
+            }
+            if (usuario.getDescripcionUsuario() != null) {
+                usuarioExistente.setDescripcionUsuario(usuario.getDescripcionUsuario());
+            }
+            if (usuario.getYoutubeUsuario() != null) {
+                usuarioExistente.setYoutubeUsuario(usuario.getYoutubeUsuario());
+            }
+            if (usuario.getSpotifyUsuario() != null) {
+                usuarioExistente.setSpotifyUsuario(usuario.getSpotifyUsuario());
+            }
+            if (usuario.getInstagramUsuario() != null) {
+                usuarioExistente.setInstagramUsuario(usuario.getInstagramUsuario());
+            }
+            Usuario usuarioActualizado = usuarioService.actualizarUsuario(usuarioExistente);
             return ResponseEntity.ok(usuarioActualizado);
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -324,6 +343,29 @@ public class UsuarioController extends BaseController<Usuario, String> {
             ex.printStackTrace();
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(Map.of("error", "Error al obtener artistas recientes: " + ex.getMessage()));
+        }
+    }
+
+    /**
+     * Top usuarios por cantidad de seguidores para un tipo dado (ARTISTA / ESTABLECIMIENTO).
+     * Ej: /api/usuario/top-por-seguidores?tipo=ARTISTA&limit=10
+     */
+    @GetMapping("/top-por-seguidores")
+    public ResponseEntity<?> obtenerTopPorSeguidores(
+            @RequestParam(name = "tipo") String tipo,
+            @RequestParam(name = "limit", defaultValue = "10") int limit) {
+        try {
+            if (tipo == null || tipo.isBlank()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Debe indicar el tipo de usuario (p.ej. ARTISTA o ESTABLECIMIENTO)"));
+            }
+            List<Usuario> usuarios = usuarioService.obtenerTopPorSeguidoresPorTipo(tipo, limit);
+            if (usuarios.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener ranking por seguidores: " + ex.getMessage()));
         }
     }
 }
