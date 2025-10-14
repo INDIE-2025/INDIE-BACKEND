@@ -96,6 +96,36 @@ public class EventoController extends BaseController<Evento, String> {
         }).toList();
         return ResponseEntity.ok(response);
     }
+    
+    @GetMapping("/proximos")
+    public ResponseEntity<List<EventoResponse>> obtenerProximosEventos() {
+        System.out.println("=== CONTROLLER: Recibida petición para próximos eventos ===");
+        
+        // Obtener todos los eventos publicados con fecha >= actual
+        List<Evento> eventos = eventoService.obtenerProximosEventosPublicados();
+        System.out.println("Próximos eventos obtenidos: " + eventos.size());
+        
+        List<EventoResponse> response = eventos.stream().map(e -> {
+            EventoResponse r = new EventoResponse();
+            r.id = e.getId();
+            r.titulo = e.getTituloEvento();
+            r.descripcion = e.getDescripcionEvento();
+            r.fechaHoraEvento = e.getFechaHoraEvento();
+            r.ubicacion = e.getUbicacionEvento();
+            r.idUsuario = e.getIdUsuario().getId();
+            r.createdAt = e.getFechaAltaEvento();
+            r.updatedAt = e.getFechaModificacionEvento();
+            
+            // Obtener los IDs de colaboradores
+            r.colaboradoresIds = e.getColaboraciones().stream()
+                .map(c -> c.getIdUsuario().getId())
+                .toList();
+                
+            return r;
+        }).toList();
+        
+        return ResponseEntity.ok(response);
+    }
 
     @Override
     @GetMapping("/{id}")
