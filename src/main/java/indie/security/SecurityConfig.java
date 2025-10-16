@@ -48,6 +48,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/**").permitAll() // Endpoints de autenticación
                         .requestMatchers("/api/public/**").permitAll() // Endpoints públicos específicos
                         .requestMatchers("/api/eventos/**").permitAll() // Endpoints para dev
+                        .requestMatchers("/api/usuario/artistas-recientes").permitAll() // Artistas para home sin login
+                        .requestMatchers("/api/usuario/top-por-seguidores").permitAll() // Top usuarios sin login
+                        .requestMatchers("/api/usuario/**/foto-perfil").permitAll() // Fotos de perfil públicas
                         .requestMatchers("/api/admin/**").permitAll() // Endpoints para dev
                         .requestMatchers("/api/archivoEvento/**").permitAll() // Temporalmente permitido para desarrollo
                         .requestMatchers("/api/chat/**").authenticated() // Endpoints privados
